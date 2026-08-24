@@ -1,0 +1,16 @@
+# Dependency directories
+node_modules/
+**/node_modules/
+
+# Build outputs and caches
+.svelte-kit/
+dist/
+build/
+.turbo/
+.pnpm-store/
+.DS_Store
+
+# PocketBase local database and binary downloads
+**/apps/pocketbase/pb_data/
+**/apps/pocketbase/pocketbase
+**/apps/pocketbase/node_modules/
