@@ -16,6 +16,7 @@
   "packageManager": "pnpm@10.24.0",
   "devDependencies": {
     "@fadlee/pocketbase-bin": "^1.0.1",
+    "@sveltejs/mcp": "^0.1.26",
     "dotenv-cli": "^11.0.0"
   }
 }
