@@ -69,7 +69,7 @@ async function populateCategories() {
   return categories;
 }
 
-async function populateAuthors(count = 6) {
+async function populateAuthors(count = 8) {
   console.log(`Seeding ${count} authors...`);
   const authors = [];
   for (let i = 0; i < count; i++) {
@@ -84,7 +84,7 @@ async function populateAuthors(count = 6) {
   return authors;
 }
 
-async function populateArticles(categories, authors, count = 15) {
+async function populateArticles(categories, authors, count = 30) {
   console.log(`Seeding ${count} articles...`);
   const articles = [];
   for (let i = 0; i < count; i++) {
