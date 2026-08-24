@@ -2,7 +2,8 @@
   "name": "pocketbase",
   "private": true,
   "scripts": {
-    "dev": "pocketbase serve"
+    "dev": "pocketbase serve",
+    "setup": "pocketbase superuser upsert ${POCKETBASE_ADMIN_EMAIL} ${POCKETBASE_ADMIN_PASSWORD}"
   },
   "devDependencies": {
     "@fadlee/pocketbase-bin": "^1.0.1"

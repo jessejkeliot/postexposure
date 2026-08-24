@@ -7,6 +7,7 @@
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "pnpm --filter pocketbase dev",
     "dev": "concurrently \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+    "dev:setup": "dotenv -e .env -- pnpm --filter pocketbase run setup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.24.0",
   "devDependencies": {
-    "@fadlee/pocketbase-bin": "^1.0.1"
+    "@fadlee/pocketbase-bin": "^1.0.1",
+    "dotenv-cli": "^11.0.0"
   }
 }

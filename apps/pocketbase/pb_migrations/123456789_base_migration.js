@@ -3,9 +3,9 @@ migrate((app) => {
     const categories = new Collection({
         type: "base",
         name: "categories",
-        listRule: "", // Public read
+        listRule: "",
         viewRule: "",
-        createRule: null, // Admin only
+        createRule: null,
         updateRule: null,
         deleteRule: null,
         fields: [
@@ -63,9 +63,40 @@ migrate((app) => {
     });
     app.save(articles);
     
+    // 4. Seasons Collection
+    const seasons = new Collection({
+        type: "base",
+        name: "seasons",
+        listRule: "",
+        viewRule: "",
+        fields: [
+            { name: "title", type: "text", required: true },
+            { name: "start_date", type: "date", required: true },
+            { name: "end_date", type: "date", required: true },
+            { name: "description", type: "text", required: false }
+        ]
+    });
+    app.save(seasons);
+
+    // 5. Films Collection
+    const films = new Collection({
+        type: "base",
+        name: "films",
+        listRule: "",
+        viewRule: "",
+        fields: [
+            { name: "title", type: "text", required: true },
+            { name: "director", type: "text", required: true },
+            { name: "release_date", type: "date", required: true },
+            { name: "description", type: "text", required: false }
+        ]
+    });
+    app.save(films);
+    
+    // 6. Screenings Collection
     const screenings = new Collection({
-        type:"base",
-        name:"screenings",
+        type: "base",
+        name: "screenings",
         listRule: "",
         viewRule: "",
         fields: [
@@ -77,39 +108,11 @@ migrate((app) => {
                 collectionId: films.id,
                 cascadeDelete: false 
             },
-            {name: "showing_date", type: "date", required: true},
-            {name: "showing_time", type: "date", required: true},
+            { name: "showing_date", type: "date", required: true },
+            { name: "showing_time", type: "date", required: true },
         ]
     });
     app.save(screenings);
-    const films = new Collection({
-        type:"base",
-        name:"films",
-        listRule: "",
-        viewRule: "",
-        fields: [
-            {name: "title", type: "text", required: true},
-            {name: "director", type: "text", required: true},
-            {name: "release_date", type: "date", required: true},
-            {name: "description", type: "text", required: false}
-        ]
-    });
-    app.save(films);
-
-
-    const seasons = new Collection({
-        type:"base",
-        name:"seasons",
-        listRule: "",
-        viewRule: "",
-        fields: [
-            {name: "title", type: "text", required: true},
-            {name: "start_date", type: "date", required: true},
-            {name: "end_date", type: "date", required: true},
-            {name: "description", type: "text", required: false}
-        ]
-    });
-    app.save(seasons);
 
 }, (app) => {
     // Down migration (rollback behavior if needed)
