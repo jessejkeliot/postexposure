@@ -1,0 +1,10 @@
+{
+  "name": "pocketbase",
+  "private": true,
+  "scripts": {
+    "dev": "pocketbase serve"
+  },
+  "devDependencies": {
+    "@fadlee/pocketbase-bin": "^1.0.1"
+  }
+}
