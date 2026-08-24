@@ -1,11 +1,16 @@
 {
   "name": "pocketbase",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "pocketbase serve",
-    "setup": "pocketbase superuser upsert ${POCKETBASE_ADMIN_EMAIL} ${POCKETBASE_ADMIN_PASSWORD}"
+    "setup": "pocketbase superuser upsert ${POCKETBASE_ADMIN_EMAIL} ${POCKETBASE_ADMIN_PASSWORD}",
+    "populate": "node scripts/populate.js"
   },
   "devDependencies": {
-    "@fadlee/pocketbase-bin": "^1.0.1"
+    "@fadlee/pocketbase-bin": "^1.0.1",
+    "@faker-js/faker": "^10.6.0",
+    "dotenv": "^17.4.2",
+    "pocketbase": "^0.28.0"
   }
 }

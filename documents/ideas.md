@@ -7,8 +7,6 @@ Sveltekit - Meta Framework
 Skeleton - UI Library
 TailwindCSS - Styling
 
-
-
 ### Aesthetics
 https://harvardfilmarchive.org/
 https://www.theparisreview.org/
