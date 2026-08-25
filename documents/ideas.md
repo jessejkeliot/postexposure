@@ -21,3 +21,11 @@ https://harpers.org/
 - subscribe or login to continue reading
 - comments on articles
 
+### Home page
+
+Flow:
+We go 4 of the articles at the start, two from the daily one from the archive, and one from the current issue.
+Then we have a compact calendar for the week coming with each day marked for what is playing that day
+Then there is a link to buy the Magazine
+
+
