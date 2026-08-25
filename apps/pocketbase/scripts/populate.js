@@ -39,10 +39,10 @@ async function authenticate() {
 async function populateCategories() {
   console.log('Seeding categories...');
   const categoryNames = [
-    'Film Reviews',
-    'Interviews',
-    'Reports',
-    'Essays',
+    'Film Review',
+    'Interview',
+    'Report',
+    'Essay',
   ];
 
   const categories = [];
