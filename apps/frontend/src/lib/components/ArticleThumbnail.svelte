@@ -6,9 +6,10 @@
 		article: Article;
 		variant?: 'compact' | 'standard' | 'featured';
 		showCover?: boolean;
+		showDate?: boolean;
 	}
 
-	let { article, variant = 'standard', showCover = true }: Props = $props();
+	let { article, variant = 'standard', showCover = true, showDate = false }: Props = $props();
 
 	const coverUrl = $derived.by(() => {
 		if (!article.cover_image) return null;
@@ -41,18 +42,14 @@
 	<div>
 		{#if showCover && coverUrl}
 			<a
-				href={`/articles/${article.slug}`}
-				class="mb-4 block aspect-16/10 min-w-28 overflow-hidden bg-zinc-100 z-4"
+				href="/articles/{article.slug}"
+				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden bg-zinc-100"
 			>
-				<img 
-				src={coverUrl}
-				class="z-10 w-full h-full opacity-80 transition-opacity hover:opacity-0"
-				alt={article.title}
-				/>
+
 				<img
 					src={coverUrl}
 					alt={article.title}
-					class="vignette h-full w-full object-cover p-4 md:p-8 z-8"
+					class="h-full w-full object-cover p-4 transition duration-220 delay-0 group-hover:saturate-120 md:p-8"
 					loading="lazy"
 				/>
 			</a>
@@ -64,11 +61,13 @@
 			{#if categoryName}
 				<span class="font-medium text-black">[{categoryName}]</span>
 			{/if}
-			{#if categoryName && formattedDate}
-				<span>•</span>
-			{/if}
-			{#if formattedDate}
-				<time datetime={article.published_at}>{formattedDate}</time>
+			{#if showDate}
+				{#if categoryName && formattedDate}
+					<span>•</span>
+				{/if}
+				{#if formattedDate}
+					<time datetime={article.published_at}>{formattedDate}</time>
+				{/if}
 			{/if}
 			{#if article.is_paywalled}
 				<span class="border border-zinc-400 px-1 py-0.5 text-[10px] font-semibold text-zinc-700"
