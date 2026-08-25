@@ -39,12 +39,10 @@ async function authenticate() {
 async function populateCategories() {
   console.log('Seeding categories...');
   const categoryNames = [
-    'Cinema Reviews',
+    'Film Reviews',
     'Interviews',
-    'Retrospectives',
-    'Festival Dispatches',
+    'Reports',
     'Essays',
-    'Industry News'
   ];
 
   const categories = [];
@@ -101,6 +99,7 @@ async function populateArticles(categories, authors, count = 30) {
       slug,
       excerpt: faker.lorem.paragraph(),
       content,
+      cover_image: `https://picsum.photos/seed/${slug}/800/500`,
       category: category.id,
       author: author.id,
       is_paywalled: faker.datatype.boolean({ probability: 0.3 }),

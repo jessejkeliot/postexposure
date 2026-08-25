@@ -10,7 +10,9 @@ migrate((app) => {
         deleteRule: null,
         fields: [
             { name: "name", type: "text", required: true, unique: true },
-            { name: "slug", type: "text", required: true, unique: true }
+            { name: "slug", type: "text", required: true, unique: true },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
     });
     app.save(categories);
@@ -24,7 +26,9 @@ migrate((app) => {
         fields: [
             { name: "name", type: "text", required: true },
             { name: "bio", type: "text" },
-            { name: "avatar", type: "file", maxSelect: 1, maxSize: 5242880, mimeTypes: ["image/jpeg", "image/png", "image/webp"] }
+            { name: "avatar", type: "file", maxSelect: 1, maxSize: 5242880, mimeTypes: ["image/jpeg", "image/png", "image/webp"] },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
     });
     app.save(authors);
@@ -40,7 +44,7 @@ migrate((app) => {
             { name: "slug", type: "text", required: true, unique: true },
             { name: "excerpt", type: "text" },
             { name: "content", type: "editor" },
-            { name: "cover_image", type: "file", maxSelect: 1, maxSize: 5242880 },
+            { name: "cover_image", type: "text" },
             { 
                 name: "category", 
                 type: "relation", 
@@ -58,7 +62,9 @@ migrate((app) => {
                 cascadeDelete: false 
             },
             { name: "is_paywalled", type: "bool" },
-            { name: "published_at", type: "date" }
+            { name: "published_at", type: "date" },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
     });
     app.save(articles);
@@ -73,7 +79,9 @@ migrate((app) => {
             { name: "title", type: "text", required: true },
             { name: "start_date", type: "date", required: true },
             { name: "end_date", type: "date", required: true },
-            { name: "description", type: "text", required: false }
+            { name: "description", type: "text", required: false },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
     });
     app.save(seasons);
@@ -88,7 +96,9 @@ migrate((app) => {
             { name: "title", type: "text", required: true },
             { name: "director", type: "text", required: true },
             { name: "release_date", type: "date", required: true },
-            { name: "description", type: "text", required: false }
+            { name: "description", type: "text", required: false },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
     });
     app.save(films);
@@ -110,6 +120,8 @@ migrate((app) => {
             },
             { name: "showing_date", type: "date", required: true },
             { name: "showing_time", type: "date", required: true },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
     });
     app.save(screenings);

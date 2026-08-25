@@ -10,9 +10,13 @@
 
 	let { article, variant = 'standard', showCover = true }: Props = $props();
 
-	const coverUrl = $derived(
-		article.cover_image ? getFileUrl(article, article.cover_image, { thumb: '600x400' }) : null
-	);
+	const coverUrl = $derived.by(() => {
+		if (!article.cover_image) return null;
+		if (article.cover_image.startsWith('http://') || article.cover_image.startsWith('https://')) {
+			return article.cover_image;
+		}
+		return getFileUrl(article, article.cover_image, { thumb: '600x400' });
+	});
 
 	const formattedDate = $derived(
 		article.published_at
@@ -36,19 +40,29 @@
 >
 	<div>
 		{#if showCover && coverUrl}
-			<a href={`/articles/${article.slug}`} class="mb-4 block aspect-16/10 overflow-hidden bg-zinc-100">
+			<a
+				href={`/articles/${article.slug}`}
+				class="mb-4 block aspect-16/10 min-w-28 overflow-hidden bg-zinc-100 z-4"
+			>
+				<img 
+				src={coverUrl}
+				class="z-10 w-full h-full opacity-80 transition-opacity hover:opacity-0"
+				alt={article.title}
+				/>
 				<img
 					src={coverUrl}
 					alt={article.title}
-					class="h-full w-full object-cover grayscale"
+					class="vignette h-full w-full object-cover p-4 md:p-8 z-8"
 					loading="lazy"
 				/>
 			</a>
 		{/if}
 
-		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider uppercase text-zinc-500">
+		<div
+			class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider text-zinc-500 uppercase"
+		>
 			{#if categoryName}
-				<span class="font-medium text-black">{categoryName}</span>
+				<span class="font-medium text-black">[{categoryName}]</span>
 			{/if}
 			{#if categoryName && formattedDate}
 				<span>•</span>
@@ -57,12 +71,14 @@
 				<time datetime={article.published_at}>{formattedDate}</time>
 			{/if}
 			{#if article.is_paywalled}
-				<span class="border border-zinc-400 px-1 py-0.5 text-[10px] font-semibold text-zinc-700">Subscriber</span>
+				<span class="border border-zinc-400 px-1 py-0.5 text-[10px] font-semibold text-zinc-700"
+					>Subscriber</span
+				>
 			{/if}
 		</div>
 
 		<h2
-			class="mt-2 font-serif font-normal leading-snug tracking-tight text-zinc-900 group-hover:underline {variant ===
+			class="mt-2 font-serif leading-snug font-normal tracking-tight text-zinc-900 group-hover:underline {variant ===
 			'featured'
 				? 'text-2xl md:text-3xl'
 				: variant === 'compact'
@@ -74,7 +90,7 @@
 			</a>
 		</h2>
 
-		{#if article.excerpt && variant !== 'compact'}
+		{#if article.excerpt && variant !== 'compact' && variant !== 'standard'}
 			<p class="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600">
 				{article.excerpt}
 			</p>
