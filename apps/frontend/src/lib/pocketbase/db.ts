@@ -21,12 +21,12 @@ export async function getRecentArticles(
 	limit = 10,
 	client: PocketBase = defaultClient
 ): Promise<Article[]> {
-	return await client.collection('articles').getFullList<Article>({
-		batch: limit,
-		sort: '-published_at,-created',
+	const res = await client.collection('articles').getList<Article>(1, limit, {
+		sort: '-published_at',
 		expand: 'category,author',
-		filter: 'published_at != null'
+		filter: 'published_at != ""'
 	});
+	return res.items;
 }
 
 /**
@@ -36,7 +36,7 @@ export async function getArticles(
 	options: PaginationOptions = {},
 	client: PocketBase = defaultClient
 ) {
-	const { page = 1, perPage = 10, filter, sort = '-published_at,-created', expand = 'category,author' } = options;
+	const { page = 1, perPage = 10, filter, sort = '-published_at', expand = 'category,author' } = options;
 	return await client.collection('articles').getList<Article>(page, perPage, {
 		filter,
 		sort,
@@ -86,7 +86,7 @@ export async function getArticlesByAuthor(
 ): Promise<Article[]> {
 	return await client.collection('articles').getList<Article>(1, limit, {
 		filter: `author="${authorId}"`,
-		sort: '-published_at,-created',
+		sort: '-published_at',
 		expand: 'category,author'
 	}).then((res) => res.items);
 }
@@ -101,7 +101,7 @@ export async function getArticlesByCategory(
 ): Promise<Article[]> {
 	return await client.collection('articles').getList<Article>(1, limit, {
 		filter: `category="${categoryId}"`,
-		sort: '-published_at,-created',
+		sort: '-published_at',
 		expand: 'category,author'
 	}).then((res) => res.items);
 }
@@ -117,7 +117,7 @@ export async function searchArticles(
 	const sanitized = query.replace(/"/g, '\\"');
 	return await client.collection('articles').getList<Article>(1, limit, {
 		filter: `title ~ "${sanitized}" || excerpt ~ "${sanitized}"`,
-		sort: '-published_at,-created',
+		sort: '-published_at',
 		expand: 'category,author'
 	}).then((res) => res.items);
 }
