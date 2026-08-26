@@ -2,19 +2,23 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+@import '@fontsource/roboto';
+@import '@fontsource/bebas-neue';
+
 @import '@skeletonlabs/skeleton'; 
 @import '@skeletonlabs/skeleton-svelte'; 
-@import '@skeletonlabs/skeleton/themes/cerberus'; 
+@import '../lib/assets/themes/expotheme.css';
 
-@plugin "@iconify/tailwind4";
+@plugin "@iconify/tailwind4" {
+    scale: 1.375
+}
 @theme {
   --font-roboto: "Roboto", sans-serif;
+  --breakpoint-xs: 30rem;
 }
 
 :root,
 html,
 body {
-  background-color: #ffffff !important;
-  color: #000000;
   min-height: 100%;
 }

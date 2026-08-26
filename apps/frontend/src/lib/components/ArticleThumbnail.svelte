@@ -39,7 +39,7 @@
 		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
 		: ''}"
 >
-	<div>
+	<div class="min-w-28">
 		{#if showCover && coverUrl}
 			<a
 				href="/articles/{article.slug}"
@@ -49,7 +49,7 @@
 				<img
 					src={coverUrl}
 					alt={article.title}
-					class="h-full w-full object-cover p-4 transition duration-220 delay-0 group-hover:saturate-120 md:p-8"
+					class="h-full w-full object-cover p-4 lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100 md:p-2"
 					loading="lazy"
 				/>
 			</a>
@@ -77,7 +77,7 @@
 		</div>
 
 		<h2
-			class="mt-2 font-serif leading-snug font-normal tracking-tight text-zinc-900 group-hover:underline {variant ===
+			class="mt-2 font-roboto leading-snug font-bold tracking-wider tracking-tight text-zinc-900 group-hover:underline {variant ===
 			'featured'
 				? 'text-2xl md:text-3xl'
 				: variant === 'compact'
