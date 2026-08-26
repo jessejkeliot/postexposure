@@ -1,10 +1,14 @@
 import type { PageServerLoad } from './$types';
-import { getRecentArticles } from '$lib/pocketbase/db';
+import { getRecentArticles, getScreeningsForCurrentWeek } from '$lib/pocketbase/db';
 
 export const load: PageServerLoad = async () => {
-	const articles = await getRecentArticles(4);
+	const [articles, screenings] = await Promise.all([
+		getRecentArticles(4),
+		getScreeningsForCurrentWeek()
+	]);
 
 	return {
-		articles
+		articles,
+		screenings
 	};
 };
