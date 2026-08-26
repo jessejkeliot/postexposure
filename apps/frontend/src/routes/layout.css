@@ -5,25 +5,34 @@
 @import '@fontsource/roboto';
 @import '@fontsource/bebas-neue';
 
-@import '@skeletonlabs/skeleton'; 
-@import '@skeletonlabs/skeleton-svelte'; 
+@import '@skeletonlabs/skeleton';
+@import '@skeletonlabs/skeleton-svelte';
 @import '../lib/assets/themes/expotheme.css';
 
-@plugin "@iconify/tailwind4" {
-    scale: 1.375
+@plugin '@iconify/tailwind4' {
+	scale: 1.375;
 }
 @theme {
-  --font-roboto: "Roboto", sans-serif;
-  --breakpoint-xs: 30rem;
-
+	--font-roboto: 'Roboto', sans-serif;
+	--breakpoint-xxs: 24rem;
+	--breakpoint-xs: 30rem;
 }
 @layer utilities {
-  .font-roboto {
-    font-family: "Roboto", sans-serif;
-    font-optical-sizing: auto;
-    font-variation-settings: "wdth" 100;
-  }
-  .color-scheme-light {
+	.banner-out-triangle {
+		clip-path: polygon(0 0, 100% 0, max(calc(100% - 70px), 95%) 50%, 100% 100%, 0 100%);
+	}
+	.banner-in-triangle {
+		clip-path: polygon(0 0, 100% 0, max(calc(100% - 70px), 95%) 50%, 100% 100%, 0 100%);
+	}
+    .banner-in-out-triangle {
+        clip-path: polygon(0 0, min(calc(70px), 5%) 50%, 0 100%, 100% 100%, max(calc(100% - 70px), 95%) 50%, 100% 0);
+    }
+	.font-roboto {
+		font-family: 'Roboto', sans-serif;
+		font-optical-sizing: auto;
+		font-variation-settings: 'wdth' 100;
+	}
+	.color-scheme-light {
 		color-scheme: light;
 	}
 
@@ -32,14 +41,16 @@
 	}
 }
 @layer base {
-    *, ::before, ::after {
-    /* Sets a global default spacing between text and underlines */
-    text-underline-offset: 3px; 
-  }
+	*,
+	::before,
+	::after {
+		/* Sets a global default spacing between text and underlines */
+		text-underline-offset: 3px;
+	}
 }
 
 :root,
 html,
 body {
-  min-height: 100%;
+	min-height: 100%;
 }

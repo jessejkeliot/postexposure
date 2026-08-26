@@ -9,13 +9,13 @@
 <div class="relative">
 	<!-- Darkened background -->
 	<div
-		class="absolute inset-0 bg-cover bg-center brightness-85"
+		class="absolute inset-0 bg-cover bg-center brightness-85 banner-in-out-triangle"
 		style={`background-image: url("${image_url}")`}
 	></div>
 
 	<!-- Image only appears inside text -->
 	<h1
-		class="px-4 relative text-3xl font-bold font-roboto italic bg-cover bg-clip-text text-transparent brightness-200 contrast-150  bg-[position:30%_60%] text-shadow-md text-shadow-surface-200-800"
+		class="px-4 relative text-3xl text-center font-bold font-roboto italic bg-cover bg-clip-text text-transparent brightness-200 contrast-150  bg-[position:30%_60%] text-shadow-sm md:text-shadow-lg text-shadow-surface-200"
 		style={`background-image: url("${image_url}")`}
 	>
 		Halloween Season
