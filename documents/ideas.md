@@ -21,6 +21,14 @@ https://harpers.org/
 - subscribe or login to continue reading
 - comments on articles
 - add post exposure calendar to your calendar
+- buy tickets to screenings
+- screenings able to be sold out
+- add banner
+
+###
+To Do:
+- Add ticket table to base migration schema
+- Add capacity to screening + tickets sold which is calculated from a query on the tickets table.
 
 ### Home page
 
