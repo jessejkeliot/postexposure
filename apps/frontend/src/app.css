@@ -12,13 +12,10 @@
   }
 }
 
-@layer base {
-    div {
-        color: black;
-        background: white;
-    }
-    body {
-        color: black;
-        background: white;
-    }
+:root,
+html,
+body {
+  background-color: #ffffff;
+  color: #000000;
+  min-height: 100%;
 }
