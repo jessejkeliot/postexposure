@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@import "../lib/assets/themes/expotheme";
+@import "./lib/assets/themes/expotheme";
+/* Right now app.css is not being imported anywhere */
 
 @theme {
   --font-roboto: "Roboto", sans-serif;
@@ -11,6 +12,13 @@
     font-optical-sizing: auto;
     font-variation-settings: "wdth" 100;
   }
+  .color-scheme-light {
+		color-scheme: light;
+	}
+
+	.color-scheme-dark {
+		color-scheme: dark;
+	}
 }
 
 :root,

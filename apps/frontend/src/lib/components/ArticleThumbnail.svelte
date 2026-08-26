@@ -77,7 +77,7 @@
 		</div>
 
 		<h2
-			class="mt-2 font-roboto leading-snug font-bold tracking-wider tracking-tight  group-hover:underline {variant ===
+			class="mt-2 leading-snug font-bold tracking-wider  group-hover:underline {variant ===
 			'featured'
 				? 'text-2xl md:text-3xl'
 				: variant === 'compact'

@@ -1,6 +1,8 @@
+
+
 [data-theme='expo'] {
 	--text-scaling: 1.25;
-	--typo-base--font-family: system-ui, sans-serif;
+	--typo-base--font-family: "Roboto", sans-serif;
 	--typo-base--font-size: 14px;
 	--typo-base--color-light: oklch(0 0 0 / 1);
 	--typo-base--color-dark: oklch(1 0 0 / 1);
