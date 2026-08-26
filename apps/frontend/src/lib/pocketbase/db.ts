@@ -1,6 +1,8 @@
+import { Temporal } from '@js-temporal/polyfill';
 import type PocketBase from 'pocketbase';
 import { pb as defaultClient } from './client';
 import type { Article, Author, Category, Film, Screening, Season } from '$lib/types/database';
+import { getWeekDateRange } from '$lib/funcs/dates';
 
 export interface PaginationOptions {
 	page?: number;
@@ -8,6 +10,37 @@ export interface PaginationOptions {
 	filter?: string;
 	sort?: string;
 	expand?: string;
+}
+
+export type TemporalDateInput =
+	| Temporal.PlainDate
+	| Temporal.PlainDateTime
+	| Temporal.Instant
+	| Temporal.ZonedDateTime
+	| string
+	| Date;
+
+/**
+ * Normalizes any temporal or date input into an ISO string format for PocketBase queries.
+ */
+export function toTemporalIsoString(date: TemporalDateInput): string {
+	if (typeof date === 'string') {
+		return date;
+	}
+	if (date instanceof Temporal.PlainDate) {
+		return date.toPlainDateTime({ hour: 0, minute: 0, second: 0 }).toString({ smallestUnit: 'second' });
+	}
+	if (
+		date instanceof Temporal.PlainDateTime ||
+		date instanceof Temporal.Instant ||
+		date instanceof Temporal.ZonedDateTime
+	) {
+		return date.toString();
+	}
+	if (date instanceof Date) {
+		return Temporal.Instant.fromEpochMilliseconds(date.getTime()).toString();
+	}
+	return String(date);
 }
 
 // -------------------------------------------------------------
@@ -27,6 +60,41 @@ export async function getRecentArticles(
 		filter: 'published_at != ""'
 	});
 	return res.items;
+}
+
+/**
+ * Fetch articles published before a given Temporal date/instant.
+ */
+export async function getArticlesPublishedBefore(
+	date: TemporalDateInput,
+	limit = 10,
+	client: PocketBase = defaultClient
+): Promise<Article[]> {
+	const iso = toTemporalIsoString(date);
+	const res = await client.collection('articles').getList<Article>(1, limit, {
+		filter: `published_at <= "${iso}" && published_at != ""`,
+		sort: '-published_at',
+		expand: 'category,author'
+	});
+	return res.items;
+}
+
+/**
+ * Fetch articles published within a Temporal date range.
+ */
+export async function getArticlesByDateRange(
+	startDate: TemporalDateInput,
+	endDate: TemporalDateInput,
+	client: PocketBase = defaultClient
+): Promise<Article[]> {
+	const startIso = toTemporalIsoString(startDate);
+	const endIso = toTemporalIsoString(endDate);
+
+	return await client.collection('articles').getFullList<Article>({
+		filter: `published_at >= "${startIso}" && published_at <= "${endIso}"`,
+		sort: '-published_at',
+		expand: 'category,author'
+	});
 }
 
 /**
@@ -161,13 +229,19 @@ export async function getAuthorById(
 }
 
 // -------------------------------------------------------------
-// Seasons, Films & Screenings Helpers
+// Seasons, Films & Screenings Helpers (Temporal-powered)
 // -------------------------------------------------------------
 
-export async function getCurrentSeasons(client: PocketBase = defaultClient): Promise<Season[]> {
-	const now = new Date().toISOString();
+/**
+ * Fetch active seasons relative to a Temporal instant or now.
+ */
+export async function getCurrentSeasons(
+	referenceInstant: TemporalDateInput = Temporal.Now.instant(),
+	client: PocketBase = defaultClient
+): Promise<Season[]> {
+	const iso = toTemporalIsoString(referenceInstant);
 	return await client.collection('seasons').getFullList<Season>({
-		filter: `end_date >= "${now}"`,
+		filter: `end_date >= "${iso}"`,
 		sort: 'start_date'
 	});
 }
@@ -179,15 +253,15 @@ export async function getAllFilms(client: PocketBase = defaultClient): Promise<F
 }
 
 /**
- * Fetch screenings within a specific date range (ISO strings or Date objects).
+ * Fetch screenings within a specific Temporal date range.
  */
 export async function getScreeningsByDateRange(
-	startDate: Date | string,
-	endDate: Date | string,
+	startDate: TemporalDateInput,
+	endDate: TemporalDateInput,
 	client: PocketBase = defaultClient
 ): Promise<Screening[]> {
-	const startIso = typeof startDate === 'string' ? startDate : startDate.toISOString();
-	const endIso = typeof endDate === 'string' ? endDate : endDate.toISOString();
+	const startIso = toTemporalIsoString(startDate);
+	const endIso = toTemporalIsoString(endDate);
 
 	return await client.collection('screenings').getFullList<Screening>({
 		filter: `showing_date >= "${startIso}" && showing_date <= "${endIso}"`,
@@ -197,15 +271,33 @@ export async function getScreeningsByDateRange(
 }
 
 /**
- * Fetch upcoming screenings from today onwards.
+ * Fetch screenings for the current week using Temporal PlainDate calculations.
+ */
+export async function getScreeningsForCurrentWeek(
+	timeZone = Temporal.Now.timeZoneId(),
+	client: PocketBase = defaultClient
+): Promise<Screening[]> {
+	const today = Temporal.Now.plainDateISO(timeZone);
+	// dayOfWeek: 1 (Monday) to 7 (Sunday) in ISO calendar
+	const {start, end} = getWeekDateRange(today, timeZone);
+
+	const startOfWeekIso = start.toPlainDateTime({ hour: 0, minute: 0, second: 0 }).toString();
+	const endOfWeekIso = end.toPlainDateTime({ hour: 23, minute: 59, second: 59 }).toString();
+
+	return await getScreeningsByDateRange(startOfWeekIso, endOfWeekIso, client);
+}
+
+/**
+ * Fetch upcoming screenings from today onwards using Temporal.
  */
 export async function getUpcomingScreenings(
 	limit = 10,
+	from: TemporalDateInput = Temporal.Now.instant(),
 	client: PocketBase = defaultClient
 ): Promise<Screening[]> {
-	const now = new Date().toISOString();
+	const iso = toTemporalIsoString(from);
 	return await client.collection('screenings').getList<Screening>(1, limit, {
-		filter: `showing_date >= "${now}"`,
+		filter: `showing_date >= "${iso}"`,
 		sort: 'showing_date,showing_time',
 		expand: 'film'
 	}).then((res) => res.items);
