@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { Article } from '$lib/types/database';
 	import { getFileUrl } from '$lib/pocketbase/db';
+	import { resolve } from '$app/paths';
+
+	//need to add only preloading when subscriber content when 
 
 	interface Props {
 		article: Article;
@@ -42,7 +45,7 @@
 	<div class="min-w-28">
 		{#if showCover && coverUrl}
 			<a
-				href="/articles/{article.slug}"
+				href={resolve(`/articles/${article.slug}`)} data-sveltekit-preload-data
 				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden"
 			>
 
@@ -84,7 +87,7 @@
 					? 'text-base font-medium'
 					: 'text-xl'}"
 		>
-			<a href={`/articles/${article.slug}`}>
+			<a href={resolve(`/articles/${article.slug}`)} data-sveltekit-preload-data>
 				{article.title}
 			</a>
 		</h2>
