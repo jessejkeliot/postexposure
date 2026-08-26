@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types';
 	import ArticleThumbnail from '$lib/components/ArticleThumbnail.svelte';
 	import CompactCalender from '$lib/components/CompactCalender.svelte';
+	import SeasonBanner from '$lib/components/SeasonBanner.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -16,6 +17,7 @@
 			</p>
 		{/each}
 	</section>
+    <SeasonBanner/>
     <section>  
         <CompactCalender screenings={data.screenings}></CompactCalender>
     </section>
