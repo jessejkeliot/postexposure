@@ -20,6 +20,7 @@ https://harpers.org/
 - Categorised into issues, interviews, fiction, essays, photography
 - subscribe or login to continue reading
 - comments on articles
+- add post exposure calendar to your calendar
 
 ### Home page
 
