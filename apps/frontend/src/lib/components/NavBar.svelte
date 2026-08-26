@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { resolve } from '$app/paths';
 	let { children } = $props();
 </script>
 
@@ -7,7 +8,7 @@
 		<button type="button" class="btn btn-icon p-0.5" title="Menu" aria-label="Menu">
 			<span class="icon-[boxicons--menu] btn-icon-xl"></span>
 		</button>
-		<h1 class="font-bold tracking-wide font-stretch-110% xs:text-2xl sm:text-3xl">POST EXPOSURE</h1>
+		<a href={resolve("/")} data-sveltekit-preload-data="hover"><span class="font-bold tracking-wide font-stretch-110% xxs:text-2xl sm:text-3xl">POST EXPOSURE</span></a>
 		<button type="button" class="btn btn-icon p-0.5" title="Menu" aria-label="Menu">
 			<span class="icon-[boxicons--search] btn-icon-xl"></span>
 		</button>
