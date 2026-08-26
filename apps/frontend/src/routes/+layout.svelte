@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<main class="layout bg-white text-black">
+<main class="layout min-h-screen">
 	<NavBar>
 		{@render children()}
 	</NavBar>

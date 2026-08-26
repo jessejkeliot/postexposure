@@ -34,7 +34,7 @@
 </script>
 
 <article
-	class="group flex flex-col justify-between border-b border-zinc-200 pb-6 text-black {variant ===
+	class="group flex flex-col justify-between border-b pb-6 {variant ===
 	'featured'
 		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
 		: ''}"
@@ -43,7 +43,7 @@
 		{#if showCover && coverUrl}
 			<a
 				href="/articles/{article.slug}"
-				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden bg-zinc-100"
+				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden"
 			>
 
 				<img
@@ -56,10 +56,10 @@
 		{/if}
 
 		<div
-			class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider text-zinc-500 uppercase"
+			class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider uppercase"
 		>
 			{#if categoryName}
-				<span class="font-medium text-black">[{categoryName}]</span>
+				<span class="font-medium ">[{categoryName}]</span>
 			{/if}
 			{#if showDate}
 				{#if categoryName && formattedDate}
@@ -70,14 +70,14 @@
 				{/if}
 			{/if}
 			{#if article.is_paywalled}
-				<span class="border border-zinc-400 px-1 py-0.5 text-[10px] font-semibold text-zinc-700"
+				<span class="border border-zinc-400 px-1 py-0.5 text-[10px] font-semibold "
 					>Subscriber</span
 				>
 			{/if}
 		</div>
 
 		<h2
-			class="mt-2 font-roboto leading-snug font-bold tracking-wider tracking-tight text-zinc-900 group-hover:underline {variant ===
+			class="mt-2 font-roboto leading-snug font-bold tracking-wider tracking-tight  group-hover:underline {variant ===
 			'featured'
 				? 'text-2xl md:text-3xl'
 				: variant === 'compact'
@@ -90,15 +90,15 @@
 		</h2>
 
 		{#if article.excerpt && variant !== 'compact' && variant !== 'standard'}
-			<p class="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600">
+			<p class="mt-2 line-clamp-3 text-sm leading-relaxed">
 				{article.excerpt}
 			</p>
 		{/if}
 	</div>
 
 	{#if authorName}
-		<div class="mt-4 text-xs tracking-wide text-zinc-500">
-			By <span class="font-medium text-zinc-900">{authorName}</span>
+		<div class="mt-4 text-xs tracking-wide ">
+			By <span class="font-medium ">{authorName}</span>
 		</div>
 	{/if}
 </article>
