@@ -1,9 +1,14 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { slide } from 'svelte/transition';
 	import DropMenu from './DropMenu.svelte';
 	let { children } = $props();
 
 	let showing = $state(false);
+
+    function handleScroll(event: WheelEvent): void {
+        if (event.deltaY > 0) showing=false;
+    }
 </script>
 
 <div class="min-h-screen w-full flex flex-col">
@@ -16,10 +21,15 @@
 				aria-label="Menu"
 				onclick={() => (showing = !showing)}
 			>
+                {#if showing}
+				<span class="icon-[boxicons--x] btn-icon-xl"></span>
+                {:else}
+                <!-- else content here -->
 				<span class="icon-[boxicons--menu] btn-icon-xl"></span>
+                {/if}
 			</button>
 			<a href={resolve("/")} data-sveltekit-preload-data="hover">
-				<span class="font-bold tracking-wide font-stretch-110% xxs:text-2xl sm:text-3xl">
+				<span class="font-bold tracking-wide font-stretch-110% text-xl sm:text-3xl">
 					POST EXPOSURE
 				</span>
 			</a>
@@ -29,8 +39,8 @@
 		</nav>
 		<DropMenu categories={["/essays", "/issues", "/archive", "/screenings"]} bind:showing />
 	</header>
-
 	<div class="h-full w-full flex-1 px-4 mb-4">
 		{@render children()}
 	</div>
 </div>
+<svelte:window onwheel={handleScroll}/>
