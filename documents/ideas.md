@@ -19,8 +19,8 @@ https://harpers.org/
 - links to famous reviews of movies
 - Categorised into issues, interviews, fiction, essays, photography
 - subscribe or login to continue reading
-- comments on articles
-- add post exposure calendar to your calendar
+- comments on articles **
+- add post exposure calendar to your calendar **
 - buy tickets to screenings
 - screenings able to be sold out
 - add banner
@@ -29,6 +29,9 @@ https://harpers.org/
 To Do:
 - Add ticket table to base migration schema
 - Add capacity to screening + tickets sold which is calculated from a query on the tickets table.
+- Add footer
+- functions might need fixing or the compact calendar because are the dates unaware?
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal
 
 ### Home page
 
@@ -36,5 +39,3 @@ Flow:
 We go 4 of the articles at the start, two from the daily one from the archive, and one from the current issue.
 Then we have a compact calendar for the week coming with each day marked for what is playing that day
 Then there is a link to buy the Magazine
-
-
