@@ -2,7 +2,7 @@
 	import { tick } from 'svelte';
 	import { SegmentedControl } from '@skeletonlabs/skeleton-svelte';
 	import { Temporal } from '@js-temporal/polyfill';
-	import { getArrayOfDates, getWeekDateRange, monthStrings } from '$lib/funcs/dates';
+	import { getArrayOfDates, getWeekDateRange} from '$lib/funcs/dates';
 	import type { Screening } from '$lib/types/database';
 
 	interface Props {
@@ -85,21 +85,15 @@
 			<h2 class="text-3xl italic">On This Week...</h2>
 		</SegmentedControl.Label>
 
-		{#if dates.length > 0}
-			<button type="button" class="btn w-fit preset-filled-surface-500">
-				{monthStrings[dates[0].month - 1]}
-			</button>
-		{/if}
-
 		<SegmentedControl.Control class="flex w-full flex-row justify-between border p-1 transition-all duration-75">
-			<SegmentedControl.Indicator class="bg-primary-500 text-primary-contrast-500" style="transition-duration: 250ms !important; transition-timing-function: cubic-bezier(0, 0, 0.2, 1) !important;"/>
+			<SegmentedControl.Indicator class="bg-surface-950-50 text-surface-contrast-100" style="transition-duration: 250ms !important; transition-timing-function: cubic-bezier(0, 0, 0.2, 1) !important;"/>
 			{#each dates as date (date.toString())}
 				<SegmentedControl.Item
 					value={date.toString()}
 					class="{anyScreeningOnThisDate(date)
 						? 'opacity-100'
 						: 'font-light opacity-35 dark:opacity-65'}
-						data-[state=checked]:font-normal data-[state=checked]:text-primary-contrast-500
+						data-[state=checked]:font-normal data-[state=checked]:text-surface-contrast-500
 						{Temporal.PlainDate.compare(date, today) === 0 ? 'underline' : ''}
                         px-0 mx-0
 					"
