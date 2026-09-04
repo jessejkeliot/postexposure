@@ -33,7 +33,30 @@ migrate((app) => {
     });
     app.save(authors);
 
-    // 3. Articles Collection
+    // 3. Media Collection (Centralized Asset Management)
+    const media = new Collection({
+        type: "base",
+        name: "media",
+        listRule: "",
+        viewRule: "",
+        fields: [
+            { 
+                name: "file", 
+                type: "file", 
+                required: true, 
+                maxSelect: 1, 
+                maxSize: 10485760, // 10MB limit
+                mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"] 
+            },
+            { name: "caption", type: "text" },
+            { name: "type", type: "select", maxSelect: 1, values: ["poster", "still", "banner", "thumbnail"] },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+        ]
+    });
+    app.save(media);
+
+    // 4. Articles Collection
     const articles = new Collection({
         type: "base",
         name: "articles",
@@ -75,7 +98,7 @@ migrate((app) => {
     });
     app.save(articles);
     
-    // 4. Seasons Collection
+    // 5. Seasons Collection
     const seasons = new Collection({
         type: "base",
         name: "seasons",
@@ -92,7 +115,7 @@ migrate((app) => {
     });
     app.save(seasons);
 
-    // 5. Films Collection
+    // 6. Films Collection
     const films = new Collection({
         type: "base",
         name: "films",
@@ -108,43 +131,6 @@ migrate((app) => {
         ]
     });
     app.save(films);
-
-    // 6. Media Collection (Centralized Asset Management)
-    const media = new Collection({
-        type: "base",
-        name: "media",
-        listRule: "",
-        viewRule: "",
-        fields: [
-            { 
-                name: "file", 
-                type: "file", 
-                required: true, 
-                maxSelect: 1, 
-                maxSize: 10485760, // 10MB limit
-                mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"] 
-            },
-            { name: "caption", type: "text" },
-            { name: "type", type: "select", maxSelect: 1, values: ["poster", "still", "banner", "thumbnail"] },
-            { 
-                name: "film", 
-                type: "relation", 
-                maxSelect: 1, 
-                collectionId: films.id, 
-                cascadeDelete: true 
-            },
-            { 
-                name: "article", 
-                type: "relation", 
-                maxSelect: 1, 
-                collectionId: articles.id, 
-                cascadeDelete: true 
-            },
-            { name: "created", type: "autodate", onCreate: true },
-            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
-        ]
-    });
-    app.save(media);
     
     // 7. Screenings Collection
     const screenings = new Collection({

@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import type PocketBase from 'pocketbase';
 import { pb as defaultClient } from './client';
-import type { Article, Author, Category, Film, Screening, Season, Ticket } from '$lib/types/database';
+import type { Article, Author, Category, Film, Media, Screening, Season, Ticket } from '$lib/types/database';
 import { getWeekDateRange } from '$lib/funcs/dates';
 
 export interface PaginationOptions {
@@ -56,7 +56,7 @@ export async function getRecentArticles(
 ): Promise<Article[]> {
 	const res = await client.collection('articles').getList<Article>(1, limit, {
 		sort: '-published_at',
-		expand: 'category,author',
+		expand: 'category,author,cover_image',
 		filter: 'published_at != ""'
 	});
 	return res.items;
@@ -74,7 +74,7 @@ export async function getArticlesPublishedBefore(
 	const res = await client.collection('articles').getList<Article>(1, limit, {
 		filter: `published_at <= "${iso}" && published_at != ""`,
 		sort: '-published_at',
-		expand: 'category,author'
+		expand: 'category,author,cover_image'
 	});
 	return res.items;
 }
@@ -93,7 +93,7 @@ export async function getArticlesByDateRange(
 	return await client.collection('articles').getFullList<Article>({
 		filter: `published_at >= "${startIso}" && published_at <= "${endIso}"`,
 		sort: '-published_at',
-		expand: 'category,author'
+		expand: 'category,author,cover_image'
 	});
 }
 
@@ -121,7 +121,7 @@ export async function getArticleBySlug(
 ): Promise<Article | null> {
 	try {
 		return await client.collection('articles').getFirstListItem<Article>(`slug="${slug}"`, {
-			expand: 'category,author'
+			expand: 'category,author,cover_image'
 		});
 	} catch {
 		return null;
@@ -137,7 +137,7 @@ export async function getArticleById(
 ): Promise<Article | null> {
 	try {
 		return await client.collection('articles').getOne<Article>(id, {
-			expand: 'category,author'
+			expand: 'category,author,cover_image'
 		});
 	} catch {
 		return null;
@@ -155,7 +155,7 @@ export async function getArticlesByAuthor(
 	return await client.collection('articles').getList<Article>(1, limit, {
 		filter: `author="${authorId}"`,
 		sort: '-published_at',
-		expand: 'category,author'
+		expand: 'category,author,cover_image'
 	}).then((res) => res.items);
 }
 
@@ -170,7 +170,7 @@ export async function getArticlesByCategory(
 	return await client.collection('articles').getList<Article>(1, limit, {
 		filter: `category="${categoryId}"`,
 		sort: '-published_at',
-		expand: 'category,author'
+		expand: 'category,author,cover_image'
 	}).then((res) => res.items);
 }
 
@@ -186,7 +186,7 @@ export async function searchArticles(
 	return await client.collection('articles').getList<Article>(1, limit, {
 		filter: `title ~ "${sanitized}" || excerpt ~ "${sanitized}"`,
 		sort: '-published_at',
-		expand: 'category,author'
+		expand: 'category,author,cover_image'
 	}).then((res) => res.items);
 }
 
@@ -416,4 +416,23 @@ export function getFileUrl(
 ): string {
 	if (!filename) return '';
 	return client.files.getURL(record, filename, options);
+}
+
+/**
+ * Helper to get the cover image URL for an article,
+ * supporting external URLs, expanded media records, or legacy direct file names.
+ */
+export function getArticleCoverUrl(
+	article: Article,
+	options: { thumb?: string } = {},
+	client: PocketBase = defaultClient
+): string | null {
+	if (article.expand?.cover_image?.file) {
+		return getFileUrl(article.expand.cover_image, article.expand.cover_image.file, options, client);
+	}
+	if (!article.cover_image) return null;
+	if (article.cover_image.startsWith('http://') || article.cover_image.startsWith('https://')) {
+		return article.cover_image;
+	}
+	return getFileUrl(article, article.cover_image, options, client);
 }

@@ -15,6 +15,15 @@ export interface Author {
 	avatar?: string;
 }
 
+export interface Media {
+	id: string;
+	created: string;
+	updated: string;
+	file: string;
+	caption?: string;
+	type?: 'poster' | 'still' | 'banner' | 'thumbnail' | string;
+}
+
 export interface Article {
 	id: string;
 	created: string;
@@ -31,6 +40,7 @@ export interface Article {
 	expand?: {
 		category?: Category;
 		author?: Author;
+		cover_image?: Media;
 	};
 }
 

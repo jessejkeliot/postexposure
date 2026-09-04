@@ -1,20 +1,11 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import ArticleThumbnail from '$lib/components/ArticleThumbnail.svelte';
-	import { getFileUrl } from '$lib/pocketbase/db';
+	import { getArticleCoverUrl } from '$lib/pocketbase/db';
 
 	let { data }: PageProps = $props();
 
-	const coverUrl = $derived.by(() => {
-		if (!data.article.cover_image) return null;
-		if (
-			data.article.cover_image.startsWith('http://') ||
-			data.article.cover_image.startsWith('https://')
-		) {
-			return data.article.cover_image;
-		}
-		return getFileUrl(data.article, data.article.cover_image, { thumb: '1200x800' });
-	});
+	const coverUrl = $derived(getArticleCoverUrl(data.article, { thumb: '1200x800' }));
 
 	const formattedDate = $derived(
 		data.article.published_at

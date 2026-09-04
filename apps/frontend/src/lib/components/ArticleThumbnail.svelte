@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Article } from '$lib/types/database';
-	import { getFileUrl } from '$lib/pocketbase/db';
+	import { getArticleCoverUrl } from '$lib/pocketbase/db';
 	import { resolve } from '$app/paths';
 
 	//need to add only preloading when subscriber content when 
@@ -14,13 +14,7 @@
 
 	let { article, variant = 'standard', showCover = true, showDate = false }: Props = $props();
 
-	const coverUrl = $derived.by(() => {
-		if (!article.cover_image) return null;
-		if (article.cover_image.startsWith('http://') || article.cover_image.startsWith('https://')) {
-			return article.cover_image;
-		}
-		return getFileUrl(article, article.cover_image, { thumb: '600x400' });
-	});
+	const coverUrl = $derived(getArticleCoverUrl(article, { thumb: '600x400' }));
 
 	const formattedDate = $derived(
 		article.published_at
