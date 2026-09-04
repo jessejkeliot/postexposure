@@ -4,8 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "pocketbase serve",
-    "setup": "pocketbase superuser upsert ${POCKETBASE_ADMIN_EMAIL} ${POCKETBASE_ADMIN_PASSWORD}",
-    "populate": "node scripts/populate.js"
+    "dev:s3:start": "node scripts/start-s3.js",
+    "dev:s3:stop": "docker rm -f local-s3",
+    "pb:setup": "node scripts/setup-pb.js",
+    "pb:populate": "node scripts/populate.js"
   },
   "devDependencies": {
     "@fadlee/pocketbase-bin": "^1.0.1",

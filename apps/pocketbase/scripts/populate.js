@@ -194,7 +194,7 @@ async function main() {
   const authors = await populateAuthors(6);
   await populateArticles(categories, authors, media, 15);
   await populateSeasons(3);
-  await populateFilmsAndScreenings(8);
+  await populateFilmsAndScreenings(18);
 
   console.log('Database population completed successfully!');
 }

@@ -7,7 +7,7 @@
     "dev:frontend": "pnpm --filter frontend dev",
     "dev:backend": "pnpm --filter pocketbase dev",
     "dev": "concurrently \"pnpm dev:backend\" \"pnpm dev:frontend\"",
-    "dev:setup": "dotenv -e .env -- pnpm --filter pocketbase run setup",
+    "dev:setup": "dotenv -e .env -- pnpm --filter pocketbase run pb:setup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
