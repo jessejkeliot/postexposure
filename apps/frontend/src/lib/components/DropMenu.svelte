@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { resolve} from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { linear } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
-    import type { RouteId } from './$types';
+
 	interface Props {
-        categories: RouteId[];
+		categories: string[];
 		showing: boolean;
 	}
 	let { categories, showing = $bindable(false) }: Props = $props();
@@ -16,7 +16,7 @@
 		class="absolute z-10 flex h-fit w-full flex-row justify-between bg-surface-950 py-0 text-xs text-surface-contrast-light dark:bg-surface-50 dark:text-surface-950"
 	>
 		{#each categories as category, i (category)}
-			<a href={resolve(category)} id={i.toString()} data-sveltekit-preload-data class="capitalize flex-1 text-center hover:bg-primary-700-300"
+			<a href={resolve(category)} id={i.toString()} onclick={()=> (showing = false)} class="capitalize flex-1 text-center hover:bg-primary-700-300"
 				>{category.replace("/", "")}</a
 			>
 		{/each}
