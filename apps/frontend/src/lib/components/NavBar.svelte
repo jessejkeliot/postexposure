@@ -28,7 +28,7 @@
 				<span class="icon-[boxicons--menu] btn-icon-xl"></span>
                 {/if}
 			</button>
-			<a href={resolve("/")} data-sveltekit-preload-data="hover">
+			<a href={resolve("/")} data-sveltekit-preload-data="hover" onclick={()=> (showing = false)}>
 				<span class="font-bold tracking-wide font-stretch-110% text-xl sm:text-3xl">
 					POST EXPOSURE
 				</span>
