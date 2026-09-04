@@ -2,7 +2,7 @@
 	import { tick } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { Temporal } from '@js-temporal/polyfill';
-	import { getYearOfWeeks } from '$lib/funcs/dates';
+	import { dayCodeStrings, getYearOfWeeks } from '$lib/funcs/dates';
 	import type { Screening } from '$lib/types/database';
 	import { isScreeningSoldOut, getRemainingTickets } from '$lib/pocketbase/db';
 
@@ -148,10 +148,10 @@
 		<!-- Link to Larger Calendar -->
 		<a
 			href={resolve('/calendar')}
-			class="text-xs uppercase tracking-wider font-semibold opacity-70 hover:opacity-100 hover:underline flex items-center gap-1 text-primary-600 dark:text-primary-400"
+			title="Full Calendar"
+			class="text-xs tracking-wider font-semibold opacity-70 hover:opacity-100 hover:underline flex items-center gap-1 text-primary-600 dark:text-primary-400"
 		>
-			<span>Full Calendar</span>
-			<span class="icon-[boxicons--calendar] text-sm"></span>
+			<span class="icon-[boxicons--calendar] btn btn-preset-filled btn-icon-xl"></span>
 		</a>
 	</div>
 
@@ -180,13 +180,12 @@
 								: hasScreenings
 									? 'opacity-100 hover:bg-surface-200-800'
 									: 'font-light opacity-35 dark:opacity-65 hover:opacity-75'}
-							{isToday && !isSelected ? 'underline decoration-2 underline-offset-4' : ''}
 						"
 					>
 						<span class="text-[9px] uppercase tracking-wider opacity-60">
-							{['M', 'T', 'W', 'T', 'F', 'S', 'S'][date.dayOfWeek - 1]}
+							{dayCodeStrings[date.dayOfWeek - 1]}
 						</span>
-						<span class="text-xs font-semibold">
+						<span class="text-xs font-semibold {isToday && !isSelected ? 'underline decoration-2 underline-offset-4' : ''}">
 							{date.day}
 						</span>
 						{#if hasScreenings}

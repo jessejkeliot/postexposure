@@ -31,6 +31,10 @@ export const monthCodeStrings = [
 	'Dec'
 ];
 
+export const dayCodeStrings = [
+	"Mon",'Tue', "Wed", 'Thu', 'Fri', "Sat", "Sun"
+]
+
 /**
  * Returns monday and sunday of the week for a given date as Temporal.PlainDate.
  */
