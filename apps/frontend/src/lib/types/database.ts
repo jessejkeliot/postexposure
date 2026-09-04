@@ -61,7 +61,23 @@ export interface Screening {
 	film: string;
 	showing_date: string;
 	showing_time: string;
+	total_tickets?: number;
+	tickets_sold?: number;
+	tickets_available?: number;
 	expand?: {
 		film?: Film;
+	};
+}
+
+export interface Ticket {
+	id: string;
+	created: string;
+	updated: string;
+	screening: string;
+	user: string;
+	status?: string;
+	expand?: {
+		screening?: Screening;
+		user?: unknown;
 	};
 }

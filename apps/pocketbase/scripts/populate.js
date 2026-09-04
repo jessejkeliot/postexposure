@@ -144,11 +144,16 @@ async function populateFilmsAndScreenings(count = 8) {
     // Create 1-3 screenings for each film
     const screeningCount = faker.number.int({ min: 1, max: 3 });
     for (let j = 0; j < screeningCount; j++) {
-      const showDate = faker.date.soon({ days: 30 });
+      const showDate = faker.date.soon({ days: 90 });
+      const totalTickets = faker.helpers.arrayElement([40, 50, 60, 80, 100]);
+      const ticketsSold = faker.number.int({ min: 0, max: totalTickets });
       await pb.collection('screenings').create({
         film: film.id,
         showing_date: showDate.toISOString(),
-        showing_time: showDate.toISOString()
+        showing_time: showDate.toISOString(),
+        total_tickets: totalTickets,
+        tickets_sold: ticketsSold,
+        tickets_available: totalTickets - ticketsSold
       });
     }
   }

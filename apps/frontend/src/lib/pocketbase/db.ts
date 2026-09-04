@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import type PocketBase from 'pocketbase';
 import { pb as defaultClient } from './client';
-import type { Article, Author, Category, Film, Screening, Season } from '$lib/types/database';
+import type { Article, Author, Category, Film, Screening, Season, Ticket } from '$lib/types/database';
 import { getWeekDateRange } from '$lib/funcs/dates';
 
 export interface PaginationOptions {
@@ -301,6 +301,108 @@ export async function getUpcomingScreenings(
 		sort: 'showing_date,showing_time',
 		expand: 'film'
 	}).then((res) => res.items);
+}
+
+/**
+ * Fetch all upcoming screenings without limit.
+ */
+export async function getAllUpcomingScreenings(
+	from: TemporalDateInput = Temporal.Now.instant(),
+	client: PocketBase = defaultClient
+): Promise<Screening[]> {
+	const iso = toTemporalIsoString(from);
+	return await client.collection('screenings').getFullList<Screening>({
+		filter: `showing_date >= "${iso}"`,
+		sort: 'showing_date,showing_time',
+		expand: 'film'
+	});
+}
+
+/**
+ * Fetch screenings spanning a full year from the current date.
+ */
+export async function getScreeningsForYear(
+	startDate?: Temporal.PlainDate,
+	timeZone = Temporal.Now.timeZoneId(),
+	client: PocketBase = defaultClient
+): Promise<Screening[]> {
+	const today = startDate ?? Temporal.Now.plainDateISO(timeZone);
+	const startIso = today.toPlainDateTime({ hour: 0, minute: 0, second: 0 }).toString();
+	const oneYearLater = today.add({ years: 1 });
+	const endIso = oneYearLater.toPlainDateTime({ hour: 23, minute: 59, second: 59 }).toString();
+
+	return await getScreeningsByDateRange(startIso, endIso, client);
+}
+
+// -------------------------------------------------------------
+// Ticket Helpers & Capacity Management
+// -------------------------------------------------------------
+
+/**
+ * Calculates remaining tickets for a given screening.
+ */
+export function getRemainingTickets(screening: Screening): number {
+	if (screening.tickets_available !== undefined && screening.tickets_available !== null) {
+		return Math.max(0, screening.tickets_available);
+	}
+	const total = screening.total_tickets ?? 0;
+	const sold = screening.tickets_sold ?? 0;
+	return Math.max(0, total - sold);
+}
+
+/**
+ * Checks whether a screening is sold out.
+ */
+export function isScreeningSoldOut(screening: Screening): boolean {
+	if (screening.total_tickets === undefined || screening.total_tickets === null) {
+		return false;
+	}
+	return getRemainingTickets(screening) <= 0;
+}
+
+/**
+ * Decrements available tickets for a screening by recording additional sold tickets.
+ */
+export async function decrementTicketsAvailable(
+	screeningId: string,
+	count = 1,
+	client: PocketBase = defaultClient
+): Promise<Screening> {
+	const current = await client.collection('screenings').getOne<Screening>(screeningId);
+	const total = current.total_tickets ?? 0;
+	const currentSold = current.tickets_sold ?? 0;
+	const remaining = getRemainingTickets(current);
+
+	if (total > 0 && remaining < count) {
+		throw new Error(`Cannot decrement tickets: only ${remaining} tickets available for this screening.`);
+	}
+
+	const newSold = currentSold + count;
+	const newAvailable = Math.max(0, total - newSold);
+
+	return await client.collection('screenings').update<Screening>(screeningId, {
+		tickets_sold: newSold,
+		tickets_available: newAvailable
+	});
+}
+
+/**
+ * Books tickets for a screening and user:
+ * decrements tickets available and creates a ticket record.
+ */
+export async function bookTicket(
+	screeningId: string,
+	userId: string,
+	count = 1,
+	client: PocketBase = defaultClient
+): Promise<{ ticket: Ticket; screening: Screening }> {
+	const updatedScreening = await decrementTicketsAvailable(screeningId, count, client);
+	const ticket = await client.collection('tickets').create<Ticket>({
+		screening: screeningId,
+		user: userId,
+		status: 'active'
+	});
+	return { ticket, screening: updatedScreening };
 }
 
 /**

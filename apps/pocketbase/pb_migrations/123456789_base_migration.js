@@ -120,15 +120,53 @@ migrate((app) => {
             },
             { name: "showing_date", type: "date", required: true },
             { name: "showing_time", type: "date", required: true },
+            { name: "total_tickets", type: "number", min: 0 },
+            { name: "tickets_sold", type: "number", min: 0 },
+            { name: "tickets_available", type: "number", min: 0 },
             { name: "created", type: "autodate", onCreate: true },
             { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
     });
     app.save(screenings);
 
+    // 7. Tickets Collection
+    const users = app.findCollectionByNameOrId("users");
+    const tickets = new Collection({
+        type: "base",
+        name: "tickets",
+        listRule: "",
+        viewRule: "",
+        createRule: "",
+        updateRule: "",
+        deleteRule: "",
+        fields: [
+            {
+                name: "screening",
+                type: "relation",
+                required: true,
+                maxSelect: 1,
+                collectionId: screenings.id,
+                cascadeDelete: true
+            },
+            {
+                name: "user",
+                type: "relation",
+                required: true,
+                maxSelect: 1,
+                collectionId: users.id,
+                cascadeDelete: true
+            },
+            { name: "status", type: "text" },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+        ]
+    });
+    app.save(tickets);
+
 }, (app) => {
     // Down migration (rollback behavior if needed)
     try {
+        app.delete(app.findCollectionByNameOrId("tickets"));
         app.delete(app.findCollectionByNameOrId("articles"));
         app.delete(app.findCollectionByNameOrId("authors"));
         app.delete(app.findCollectionByNameOrId("categories"));
