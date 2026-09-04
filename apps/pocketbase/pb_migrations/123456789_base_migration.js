@@ -44,7 +44,13 @@ migrate((app) => {
             { name: "slug", type: "text", required: true, unique: true },
             { name: "excerpt", type: "text" },
             { name: "content", type: "editor" },
-            { name: "cover_image", type: "text" },
+            { 
+                name: "cover_image", 
+                type: "relation", 
+                maxSelect: 1, 
+                collectionId: media.id, // Direct reference to the primary media record
+                cascadeDelete: false 
+            },
             { 
                 name: "category", 
                 type: "relation", 
@@ -102,8 +108,45 @@ migrate((app) => {
         ]
     });
     app.save(films);
+
+    // 6. Media Collection (Centralized Asset Management)
+    const media = new Collection({
+        type: "base",
+        name: "media",
+        listRule: "",
+        viewRule: "",
+        fields: [
+            { 
+                name: "file", 
+                type: "file", 
+                required: true, 
+                maxSelect: 1, 
+                maxSize: 10485760, // 10MB limit
+                mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"] 
+            },
+            { name: "caption", type: "text" },
+            { name: "type", type: "select", maxSelect: 1, values: ["poster", "still", "banner", "thumbnail"] },
+            { 
+                name: "film", 
+                type: "relation", 
+                maxSelect: 1, 
+                collectionId: films.id, 
+                cascadeDelete: true 
+            },
+            { 
+                name: "article", 
+                type: "relation", 
+                maxSelect: 1, 
+                collectionId: articles.id, 
+                cascadeDelete: true 
+            },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+        ]
+    });
+    app.save(media);
     
-    // 6. Screenings Collection
+    // 7. Screenings Collection
     const screenings = new Collection({
         type: "base",
         name: "screenings",
@@ -129,7 +172,7 @@ migrate((app) => {
     });
     app.save(screenings);
 
-    // 7. Tickets Collection
+    // 8. Tickets Collection
     const users = app.findCollectionByNameOrId("users");
     const tickets = new Collection({
         type: "base",
@@ -173,5 +216,6 @@ migrate((app) => {
         app.delete(app.findCollectionByNameOrId("screenings"));
         app.delete(app.findCollectionByNameOrId("films"));
         app.delete(app.findCollectionByNameOrId("seasons"));
+        app.delete(app.findCollectionByNameOrId("media"));
     } catch {}
 });

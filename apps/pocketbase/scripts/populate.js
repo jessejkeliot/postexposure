@@ -36,6 +36,30 @@ async function authenticate() {
   }
 }
 
+async function populateMedia(count=40){
+  console.log(`Seeding ${count} bits of media`);
+  const media = [];
+
+  for (let index = 0; index < count; index++) {
+    const caption = faker.lorem.sentence(5);
+    const response = await fetch(`https://picsum.photos/seed/${faker.helpers.slugify(caption)}/800/500`)
+    const imageBlob = response.blob();
+    const formData = new FormData();
+    formData.append('file', imageBlob, `picsum_image_${i}.jpg`);
+    formData.append('caption', faker.lorem.sentence);
+    formData.append('type', i % 2 === 0 ? 'poster' : 'banner');
+  }
+  if (films[i]) {
+      formData.append('film', films[i].id);
+  } else if (articles[i]) {
+      formData.append('article', articles[i].id);
+  }
+  const createdRecord = await pb.collection('media').create(formData);
+  media.push(created);
+
+  return media;
+}
+
 async function populateCategories() {
   console.log('Seeding categories...');
   const categoryNames = [
@@ -82,7 +106,7 @@ async function populateAuthors(count = 8) {
   return authors;
 }
 
-async function populateArticles(categories, authors, count = 30) {
+async function populateArticles(categories, authors, media, count = 30) {
   console.log(`Seeding ${count} articles...`);
   const articles = [];
   for (let i = 0; i < count; i++) {
@@ -90,6 +114,7 @@ async function populateArticles(categories, authors, count = 30) {
     const slug = `${faker.helpers.slugify(title).toLowerCase()}-${faker.string.alphanumeric(6).toLowerCase()}`;
     const category = faker.helpers.arrayElement(categories);
     const author = faker.helpers.arrayElement(authors);
+    const media = faker.helpers.arrayElement(media);
 
     const paragraphs = faker.lorem.paragraphs({ min: 3, max: 6 }, '</p><p>');
     const content = `<p>${paragraphs}</p>`;
@@ -99,7 +124,7 @@ async function populateArticles(categories, authors, count = 30) {
       slug,
       excerpt: faker.lorem.paragraph(),
       content,
-      cover_image: `https://picsum.photos/seed/${slug}/800/500`,
+      cover_image: media.id,
       category: category.id,
       author: author.id,
       is_paywalled: faker.datatype.boolean({ probability: 0.3 }),
@@ -118,7 +143,7 @@ async function populateSeasons(count = 3) {
     const endDate = new Date(startDate.getTime() + 1000 * 60 * 60 * 24 * 28); // 4 weeks later
 
     const season = await pb.collection('seasons').create({
-      title: `${faker.word.adjective().toUpperCase()} CINEMA: Season ${i + 1}`,
+      title: `${faker.word.adjective().toUpperCase()}`,
       start_date: startDate.toISOString(),
       end_date: endDate.toISOString(),
       description: faker.lorem.paragraph()
@@ -164,10 +189,10 @@ async function main() {
   console.log(`Connecting to PocketBase at ${pbUrl}...`);
   await authenticate();
   console.log('Authenticated successfully.');
-
+  const media = await populateMedia(40);
   const categories = await populateCategories();
   const authors = await populateAuthors(6);
-  await populateArticles(categories, authors, 15);
+  await populateArticles(categories, authors, media, 15);
   await populateSeasons(3);
   await populateFilmsAndScreenings(8);
 
