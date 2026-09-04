@@ -1,0 +1,156 @@
+<script lang="ts">
+	import type { Screening } from '$lib/types/database';
+	import { getRemainingTickets, isScreeningSoldOut } from '$lib/pocketbase/db';
+	import { Temporal } from '@js-temporal/polyfill';
+
+	interface Props {
+		screening: Screening;
+		variant?: 'compact' | 'standard' | 'featured';
+		showDate?: boolean;
+	}
+
+	let { screening, variant = 'standard', showDate = true }: Props = $props();
+
+	const tz = Temporal.Now.timeZoneId();
+
+	const film = $derived(screening.expand?.film);
+	const filmTitle = $derived(film?.title ?? 'Film Screening');
+	const director = $derived(film?.director);
+	const filmDescription = $derived(film?.description);
+
+	const releaseYear = $derived.by(() => {
+		if (!film?.release_date) return null;
+		try {
+			return Temporal.Instant.from(film.release_date).toZonedDateTimeISO(tz).year;
+		} catch {
+			return new Date(film.release_date).getFullYear();
+		}
+	});
+
+	const formattedDate = $derived.by(() => {
+		try {
+			const instant = Temporal.Instant.from(screening.showing_date);
+			const zdt = instant.toZonedDateTimeISO(tz);
+			return new Intl.DateTimeFormat('en-US', {
+				weekday: 'short',
+				month: 'short',
+				day: 'numeric',
+				year: 'numeric'
+			}).format(new Date(zdt.epochMilliseconds));
+		} catch {
+			return new Intl.DateTimeFormat('en-US', {
+				weekday: 'short',
+				month: 'short',
+				day: 'numeric',
+				year: 'numeric'
+			}).format(new Date(screening.showing_date));
+		}
+	});
+
+	const formattedTime = $derived.by(() => {
+		try {
+			const instant = Temporal.Instant.from(screening.showing_time);
+			const zdt = instant.toZonedDateTimeISO(tz);
+			return zdt.toPlainTime().toString({ smallestUnit: 'minute' });
+		} catch {
+			return new Date(screening.showing_time).toLocaleTimeString([], {
+				hour: '2-digit',
+				minute: '2-digit'
+			});
+		}
+	});
+
+	const soldOut = $derived(isScreeningSoldOut(screening));
+	const remainingTickets = $derived(getRemainingTickets(screening));
+</script>
+
+<article
+	class="group flex flex-col justify-between border-b pb-6 border-surface-200-800 {variant ===
+	'featured'
+		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
+		: ''}"
+>
+	<div class="min-w-28 flex flex-col h-full justify-between">
+		<div>
+			<!-- Film Poster Card / Visual Placeholder -->
+			<div
+				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden rounded border border-surface-200-800 bg-linear-to-br from-surface-100 via-surface-200 to-surface-100 dark:from-surface-900 dark:via-surface-950 dark:to-surface-900 transition duration-200"
+			>
+				<div class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+					<span class="icon-[boxicons--film] text-4xl mb-2 opacity-50 group-hover:scale-110 transition-transform"></span>
+					<span class="text-sm font-bold tracking-wider uppercase line-clamp-2 px-2">
+						{filmTitle}
+					</span>
+					{#if releaseYear}
+						<span class="text-xs opacity-60 mt-0.5">({releaseYear})</span>
+					{/if}
+				</div>
+
+				{#if soldOut}
+					<div class="absolute top-2 right-2 rounded bg-error-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider shadow">
+						Sold Out
+					</div>
+				{:else if screening.total_tickets}
+					<div class="absolute top-2 right-2 rounded bg-surface-950/80 text-surface-50 dark:bg-surface-50/80 dark:text-surface-950 px-2 py-0.5 text-[10px] font-semibold tracking-wider backdrop-blur-xs">
+						{remainingTickets} tickets left
+					</div>
+				{/if}
+			</div>
+
+			<!-- Meta: Category, Date, Time, Status -->
+			<div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs tracking-wider uppercase">
+				<span class="font-medium text-primary-600 dark:text-primary-400">[Screening]</span>
+				{#if showDate && formattedDate}
+					<span class="opacity-50">•</span>
+					<time datetime={screening.showing_date} class="font-medium">
+						{formattedDate}
+					</time>
+					<span class="opacity-50">at</span>
+					<span class="font-bold underline decoration-primary-500/50">{formattedTime}</span>
+				{/if}
+			</div>
+
+			<!-- Title -->
+			<h2
+				class="mt-2 leading-snug font-bold tracking-wider group-hover:underline {variant ===
+				'featured'
+					? 'text-2xl md:text-3xl'
+					: variant === 'compact'
+						? 'text-base font-medium'
+						: 'text-xl'}"
+			>
+				{filmTitle}
+			</h2>
+
+			<!-- Excerpt / Film Description -->
+			{#if filmDescription && variant !== 'compact'}
+				<p class="mt-2 line-clamp-3 text-sm leading-relaxed opacity-80">
+					{filmDescription}
+				</p>
+			{/if}
+		</div>
+
+		<!-- Footer: Director & Ticket Status Info -->
+		<div class="mt-4 flex items-center justify-between text-xs tracking-wide border-t border-surface-200-800/60 pt-3">
+			{#if director}
+				<div>
+					Directed by <span class="font-medium">{director}</span>
+				</div>
+			{:else}
+				<div></div>
+			{/if}
+
+			<div>
+				{#if soldOut}
+					<span class="text-error-600 dark:text-error-400 font-bold uppercase tracking-wider">
+						Sold Out
+					</span>
+				{:else}
+					<span class="text-secondary-700 dark:text-secondary-300 font-medium">
+						{formattedTime}
+					</span>
+				{/if}
+			</div>
+		</div>
+	</div>
+</article>
