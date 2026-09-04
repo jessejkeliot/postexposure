@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { SegmentedControl } from '@skeletonlabs/skeleton-svelte';
+	import { resolve } from '$app/paths';
 	import { Temporal } from '@js-temporal/polyfill';
-	import { getArrayOfDates, getWeekDateRange} from '$lib/funcs/dates';
+	import { getYearOfWeeks } from '$lib/funcs/dates';
 	import type { Screening } from '$lib/types/database';
+	import { isScreeningSoldOut, getRemainingTickets } from '$lib/pocketbase/db';
 
 	interface Props {
 		screenings: Screening[];
@@ -13,9 +14,8 @@
 	const tz = Temporal.Now.timeZoneId();
 	const today = Temporal.Now.plainDateISO(tz);
 
-	// Monday to Sunday of the current week
-	const { start, end } = getWeekDateRange(today, tz);
-	const dates = getArrayOfDates(start, end);
+	// Generate 52 weeks (1 full year) starting from the current week
+	const weeks = getYearOfWeeks(today, tz);
 
 	function getScreeningPlainDate(screening: Screening): Temporal.PlainDate {
 		return Temporal.Instant.from(screening.showing_date)
@@ -30,17 +30,20 @@
 		});
 	}
 
-	// First date with a screening, or fallback to today
+	// Current visible week index (0 to 51)
+	let activeWeekIndex = $state(0);
+	const activeWeek = $derived(weeks[activeWeekIndex] ?? weeks[0]);
+	const headerLabel = $derived(activeWeek.label);
+
+	// Find first date with a screening in the current week, or fallback to today
 	const initialDate =
-		dates.find((date) => anyScreeningOnThisDate(date)) ??
-		(dates.some((d) => Temporal.PlainDate.compare(d, today) === 0) ? today : dates[0]);
+		weeks[0].dates.find((date) => anyScreeningOnThisDate(date)) ??
+		(weeks[0].dates.some((d) => Temporal.PlainDate.compare(d, today) === 0) ? today : weeks[0].dates[0]);
 
-	let dayHasChanged = $state(false);
-    const initialDateStr = initialDate ? initialDate.toString() : null;
-	// SegmentedControl binds to string values (ISO formatted: YYYY-MM-DD)
-	let selectedDateStr = $state<string | null>(initialDateStr);
+	let selectedDateStr = $state<string | null>(initialDate ? initialDate.toString() : null);
 
-	// Container reference for scrolling
+	// Containers
+	let scrollContainer = $state<HTMLElement | null>(null);
 	let screeningsContainer = $state<HTMLElement | null>(null);
 
 	// Derived Temporal.PlainDate from the selected value
@@ -58,58 +61,159 @@
 			: []
 	);
 
-	async function handleValueChange(newValue: string | null) {
-		selectedDateStr = newValue;
+	let isProgrammaticScroll = false;
 
-        dayHasChanged = true;
-		// Only scroll into view if changed to a date other than initial date
-		if (newValue && dayHasChanged) {
-			await tick();
-			if (screeningsContainer) {
-				const items = screeningsContainer.querySelectorAll('[data-screening-item]');
-				const target = items.length > 0 ? items[items.length - 1] : screeningsContainer;
-				target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-			}
+	function handleScroll() {
+		if (isProgrammaticScroll || !scrollContainer) return;
+		const width = scrollContainer.clientWidth;
+		if (width <= 0) return;
+		const index = Math.round(scrollContainer.scrollLeft / width);
+		activeWeekIndex = Math.max(0, Math.min(index, weeks.length - 1));
+	}
+
+	function handleWheel(event: WheelEvent) {
+		if (!scrollContainer) return;
+		// If vertical scroll dominates, map to horizontal scroll for seamless computer wheel experience
+		if (Math.abs(event.deltaY) > Math.abs(event.deltaX) && Math.abs(event.deltaY) > 5) {
+			event.preventDefault();
+			scrollContainer.scrollBy({ left: event.deltaY * 1.5, behavior: 'smooth' });
+		}
+	}
+
+	function scrollToWeek(index: number) {
+		if (!scrollContainer) return;
+		const targetIndex = Math.max(0, Math.min(index, weeks.length - 1));
+		activeWeekIndex = targetIndex;
+		isProgrammaticScroll = true;
+		scrollContainer.scrollTo({
+			left: targetIndex * scrollContainer.clientWidth,
+			behavior: 'smooth'
+		});
+		setTimeout(() => {
+			isProgrammaticScroll = false;
+		}, 300);
+	}
+
+	function prevWeek() {
+		scrollToWeek(activeWeekIndex - 1);
+	}
+
+	function nextWeek() {
+		scrollToWeek(activeWeekIndex + 1);
+	}
+
+	async function handleDateSelect(date: Temporal.PlainDate) {
+		selectedDateStr = date.toString();
+		await tick();
+		if (screeningsContainer) {
+			const items = screeningsContainer.querySelectorAll('[data-screening-item]');
+			const target = items.length > 0 ? items[0] : screeningsContainer;
+			target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 		}
 	}
 </script>
 
-<!-- Indicate: today, which days have screenings -->
-<div class="flex flex-col items-center justify-between gap-2 p-0">
-	<SegmentedControl
-		value={selectedDateStr}
-		onValueChange={(details) => handleValueChange(details.value)}
-		class="align-left flex w-full max-w-3xl flex-col space-4"
-	>
-		<SegmentedControl.Label class="font-normal">
-			<h2 class="text-3xl italic">On This Week...</h2>
-		</SegmentedControl.Label>
-
-		<SegmentedControl.Control class="flex w-full flex-row justify-between border p-1 transition-all duration-75">
-			<SegmentedControl.Indicator class="bg-surface-950-50 text-surface-contrast-100" style="transition-duration: 250ms !important; transition-timing-function: cubic-bezier(0, 0, 0.2, 1) !important;"/>
-			{#each dates as date (date.toString())}
-				<SegmentedControl.Item
-					value={date.toString()}
-					class="{anyScreeningOnThisDate(date)
-						? 'opacity-100'
-						: 'font-light opacity-35 dark:opacity-65'}
-						data-[state=checked]:font-normal data-[state=checked]:text-surface-contrast-500
-						{Temporal.PlainDate.compare(date, today) === 0 ? 'underline' : ''}
-                        px-0 mx-0
-					"
+<!-- Compact Calendar Widget -->
+<div class="flex flex-col items-center justify-between gap-4 p-0 w-full max-w-3xl mx-auto">
+	<!-- Header Bar: Dynamic Label, Prev/Next buttons, and Link to Full Calendar -->
+	<div class="flex flex-row items-center justify-between w-full">
+		<div class="flex items-center gap-2">
+			<h2 class="text-2xl sm:text-3xl italic font-normal tracking-wide">
+				{headerLabel}
+			</h2>
+			<div class="flex items-center gap-1 ml-2">
+				<button
+					type="button"
+					onclick={prevWeek}
+					disabled={activeWeekIndex === 0}
+					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 rounded text-xs"
+					aria-label="Previous week"
+					title="Previous week"
 				>
-					<SegmentedControl.ItemText class="text-xs mx-0 px-0">{date.day.toString()}</SegmentedControl.ItemText>
-					<SegmentedControl.ItemHiddenInput />
-				</SegmentedControl.Item>
-			{/each}
-		</SegmentedControl.Control>
-	</SegmentedControl>
+					<span class="icon-[boxicons--chevron-left] text-base"></span>
+				</button>
+				<button
+					type="button"
+					onclick={nextWeek}
+					disabled={activeWeekIndex >= weeks.length - 1}
+					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 rounded text-xs"
+					aria-label="Next week"
+					title="Next week"
+				>
+					<span class="icon-[boxicons--chevron-right] text-base"></span>
+				</button>
+			</div>
+		</div>
+
+		<!-- Link to Larger Calendar -->
+		<a
+			href={resolve('/calendar')}
+			class="text-xs uppercase tracking-wider font-semibold opacity-70 hover:opacity-100 hover:underline flex items-center gap-1 text-primary-600 dark:text-primary-400"
+		>
+			<span>Full Calendar</span>
+			<span class="icon-[boxicons--calendar] text-sm"></span>
+		</a>
+	</div>
+
+	<!-- Horizontal Slideable/Scrollable Multi-Week Row -->
+	<div
+		{@attach (node: HTMLElement) => {
+			scrollContainer = node;
+		}}
+		onscroll={handleScroll}
+		onwheel={handleWheel}
+		class="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth border border-surface-200-800 rounded p-1 bg-surface-50 dark:bg-surface-950"
+		style="scrollbar-width: none; -ms-overflow-style: none;"
+	>
+		{#each weeks as week (week.start.toString())}
+			<div class="w-full shrink-0 snap-start flex flex-row justify-between gap-1">
+				{#each week.dates as date (date.toString())}
+					{@const isSelected = selectedDateStr === date.toString()}
+					{@const hasScreenings = anyScreeningOnThisDate(date)}
+					{@const isToday = Temporal.PlainDate.compare(date, today) === 0}
+					<button
+						type="button"
+						onclick={() => handleDateSelect(date)}
+						class="flex-1 py-1 px-0.5 flex flex-col items-center justify-center rounded transition-colors relative cursor-pointer
+							{isSelected
+								? 'bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950 font-normal shadow-xs'
+								: hasScreenings
+									? 'opacity-100 hover:bg-surface-200-800'
+									: 'font-light opacity-35 dark:opacity-65 hover:opacity-75'}
+							{isToday && !isSelected ? 'underline decoration-2 underline-offset-4' : ''}
+						"
+					>
+						<span class="text-[9px] uppercase tracking-wider opacity-60">
+							{['M', 'T', 'W', 'T', 'F', 'S', 'S'][date.dayOfWeek - 1]}
+						</span>
+						<span class="text-xs font-semibold">
+							{date.day}
+						</span>
+						{#if hasScreenings}
+							<span
+								class="w-1.5 h-1.5 rounded-full mt-0.5 {isSelected ? 'bg-primary-400' : 'bg-primary-600'}"
+							></span>
+						{:else}
+							<span class="w-1.5 h-1.5 mt-0.5"></span>
+						{/if}
+					</button>
+				{/each}
+			</div>
+		{/each}
+	</div>
 
 	<!-- Screenings for the selected day -->
-	<div bind:this={screeningsContainer} class="w-full max-w-3xl space-y-2">
+	<div
+		{@attach (node: HTMLElement) => {
+			screeningsContainer = node;
+		}}
+		class="w-full space-y-2"
+	>
 		{#if selectedDayScreenings.length > 0}
 			<div class="divide-y divide-surface-200-800 rounded border border-surface-200-800">
 				{#each selectedDayScreenings as screening (screening.id)}
+					{@const soldOut = isScreeningSoldOut(screening)}
+					{@const remaining = getRemainingTickets(screening)}
 					<div data-screening-item class="flex flex-row items-center justify-between p-4">
 						<div>
 							<h3 class="text-lg font-bold">
@@ -121,7 +225,16 @@
 								</p>
 							{/if}
 						</div>
-						<div class="text-right">
+						<div class="text-right flex items-center gap-3">
+							{#if soldOut}
+								<span class="rounded bg-error-600 px-2 py-0.5 text-xs font-bold text-white uppercase tracking-wider">
+									Sold Out
+								</span>
+							{:else if screening.total_tickets}
+								<span class="text-xs opacity-60 font-medium hidden sm:inline">
+									{remaining} left
+								</span>
+							{/if}
 							<span class="rounded bg-secondary-200-800 px-2 py-1 text-lg font-medium">
 								{Temporal.Instant.from(screening.showing_time)
 									.toZonedDateTimeISO(tz)
