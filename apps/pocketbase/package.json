@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "pocketbase serve",
     "dev:s3:start": "node scripts/start-s3.js",
-    "dev:s3:stop": "docker rm -f local-s3",
+    "dev:s3:stop": "docker stop local-s3",
+    "dev:s3:delete": "docker rm -f local-s3",
     "pb:setup": "node scripts/setup-pb.js",
     "pb:populate": "node scripts/populate.js"
   },
