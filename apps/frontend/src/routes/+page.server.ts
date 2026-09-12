@@ -3,7 +3,7 @@ import { getRecentArticles, getScreeningsForYear } from '$lib/pocketbase/db';
 
 export const load: PageServerLoad = async () => {
 	const [articles, screenings] = await Promise.all([
-		getRecentArticles(4),
+		getRecentArticles(6),
 		getScreeningsForYear()
 	]);
 

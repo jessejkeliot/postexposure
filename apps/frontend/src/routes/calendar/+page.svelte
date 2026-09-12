@@ -20,7 +20,7 @@
 		<div>
 			<a
 				href={resolve('/screenings')}
-				class="btn text-xs font-semibold uppercase tracking-wider border border-surface-300-700 hover:bg-surface-200-800 px-3 py-1.5 rounded inline-flex items-center gap-1.5"
+				class="btn text-xs font-semibold uppercase tracking-wider border border-surface-300-700 hover:bg-surface-200-800 px-3 py-1.5 inline-flex items-center gap-1.5"
 			>
 				<span class="icon-[boxicons--list-ul]"></span>
 				List View

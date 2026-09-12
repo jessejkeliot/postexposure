@@ -43,7 +43,7 @@
 				<time datetime={data.article.published_at}>{formattedDate}</time>
 			{/if}
 			{#if data.article.is_paywalled}
-				<span class="rounded border border-surface-400-600 px-1.5 py-0.5 text-[10px] font-semibold">
+				<span class="border border-surface-400-600 px-1.5 py-0.5 text-[10px] font-semibold">
 					Subscriber
 				</span>
 			{/if}
@@ -73,7 +73,7 @@
 
 	<!-- Cover Image -->
 	{#if coverUrl}
-		<figure class="mb-10 overflow-hidden rounded bg-surface-100-900">
+		<figure class="mb-10 overflow-hidden bg-surface-100-900">
 			<img
 				src={coverUrl}
 				alt={data.article.title}

@@ -5,6 +5,7 @@
 	import { dayCodeStrings, getYearOfWeeks } from '$lib/funcs/dates';
 	import type { Screening } from '$lib/types/database';
 	import { isScreeningSoldOut, getRemainingTickets } from '$lib/pocketbase/db';
+	import ScreeningThumbnail from './ScreeningThumbnail.svelte';
 
 	interface Props {
 		screenings: Screening[];
@@ -126,7 +127,7 @@
 					type="button"
 					onclick={prevWeek}
 					disabled={activeWeekIndex === 0}
-					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 rounded text-xs"
+					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 text-xs"
 					aria-label="Previous week"
 					title="Previous week"
 				>
@@ -136,7 +137,7 @@
 					type="button"
 					onclick={nextWeek}
 					disabled={activeWeekIndex >= weeks.length - 1}
-					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 rounded text-xs"
+					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 text-xs"
 					aria-label="Next week"
 					title="Next week"
 				>
@@ -162,7 +163,7 @@
 		}}
 		onscroll={handleScroll}
 		onwheel={handleWheel}
-		class="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth border border-surface-200-800 rounded p-1 bg-surface-50 dark:bg-surface-950"
+		class="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth border border-surface-200-800 p-0 bg-surface-50 dark:bg-surface-950"
 		style="scrollbar-width: none; -ms-overflow-style: none;"
 	>
 		{#each weeks as week (week.start.toString())}
@@ -174,7 +175,7 @@
 					<button
 						type="button"
 						onclick={() => handleDateSelect(date)}
-						class="flex-1 py-1 px-0.5 flex flex-col items-center justify-center rounded transition-colors relative cursor-pointer
+						class="flex-1 py-1 px-0.5 flex flex-col items-center justify-center transition-colors relative cursor-pointer
 							{isSelected
 								? 'bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950 font-normal shadow-xs'
 								: hasScreenings
@@ -185,7 +186,7 @@
 						<span class="text-[9px] uppercase tracking-wider opacity-60">
 							{dayCodeStrings[date.dayOfWeek - 1]}
 						</span>
-						<span class="text-xs font-semibold {isToday && !isSelected ? 'underline decoration-2 underline-offset-4' : ''}">
+						<span class="text-xs font-semibold {isToday ? 'underline decoration-2 underline-offset-4' : ''}">
 							{date.day}
 						</span>
 						{#if hasScreenings}
@@ -209,39 +210,11 @@
 		class="w-full space-y-2"
 	>
 		{#if selectedDayScreenings.length > 0}
-			<div class="divide-y divide-surface-200-800 rounded border border-surface-200-800">
+			<div class="divide-y divide-surface-200-800">
 				{#each selectedDayScreenings as screening (screening.id)}
 					{@const soldOut = isScreeningSoldOut(screening)}
 					{@const remaining = getRemainingTickets(screening)}
-					<div data-screening-item class="flex flex-row items-center justify-between p-4">
-						<div>
-							<h3 class="text-lg font-bold">
-								{screening.expand?.film?.title ?? 'Film Screening'}
-							</h3>
-							{#if screening.expand?.film?.director}
-								<p class="text-sm opacity-70">
-									Directed by {screening.expand?.film?.director}
-								</p>
-							{/if}
-						</div>
-						<div class="text-right flex items-center gap-3">
-							{#if soldOut}
-								<span class="rounded bg-error-600 px-2 py-0.5 text-xs font-bold text-white uppercase tracking-wider">
-									Sold Out
-								</span>
-							{:else if screening.total_tickets}
-								<span class="text-xs opacity-60 font-medium hidden sm:inline">
-									{remaining} left
-								</span>
-							{/if}
-							<span class="rounded bg-secondary-200-800 px-2 py-1 text-lg font-medium">
-								{Temporal.Instant.from(screening.showing_time)
-									.toZonedDateTimeISO(tz)
-									.toPlainTime()
-									.toString({ smallestUnit: 'minute' })}
-							</span>
-						</div>
-					</div>
+					<ScreeningThumbnail {screening} variant='compact'/>
 				{/each}
 			</div>
 		{:else}

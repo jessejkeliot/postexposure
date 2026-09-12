@@ -65,7 +65,7 @@
 </script>
 
 <article
-	class="group flex flex-col justify-between border-b pb-6 border-surface-200-800 {variant ===
+	class="group flex flex-col justify-between border-b xl:border-b-0 pb-6 border-surface-200-800 {variant ===
 	'featured'
 		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
 		: ''}"
@@ -74,24 +74,18 @@
 		<div>
 			<!-- Film Poster Card / Visual Placeholder -->
 			<div
-				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden rounded border border-surface-200-800 bg-linear-to-br from-surface-100 via-surface-200 to-surface-100 dark:from-surface-900 dark:via-surface-950 dark:to-surface-900 transition duration-200"
+				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden border border-surface-200-800 bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
 			>
 				<div class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-					<span class="icon-[boxicons--film] text-4xl mb-2 opacity-50 group-hover:scale-110 transition-transform"></span>
-					<span class="text-sm font-bold tracking-wider uppercase line-clamp-2 px-2">
-						{filmTitle}
-					</span>
-					{#if releaseYear}
-						<span class="text-xs opacity-60 mt-0.5">({releaseYear})</span>
-					{/if}
+					<span class="icon-[boxicons--film] text-2xl sm:text-4xl mb-2 opacity-50 group-hover:scale-110 transition-transform"></span>
 				</div>
 
 				{#if soldOut}
-					<div class="absolute top-2 right-2 rounded bg-error-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider shadow">
+					<div class="absolute top-2 right-2 bg-error-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider shadow">
 						Sold Out
 					</div>
 				{:else if screening.total_tickets}
-					<div class="absolute top-2 right-2 rounded bg-surface-950/80 text-surface-50 dark:bg-surface-50/80 dark:text-surface-950 px-2 py-0.5 text-[10px] font-semibold tracking-wider backdrop-blur-xs">
+					<div class="absolute top-2 right-2 bg-surface-950/80 text-surface-50 dark:bg-surface-50/80 dark:text-surface-950 px-2 py-0.5 text-[10px] font-semibold tracking-wider backdrop-blur-xs">
 						{remainingTickets} tickets left
 					</div>
 				{/if}
@@ -99,7 +93,7 @@
 
 			<!-- Meta: Category, Date, Time, Status -->
 			<div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs tracking-wider uppercase">
-				<span class="font-medium text-primary-600 dark:text-primary-400">[Screening]</span>
+				<!-- <span class="font-medium text-primary-600 dark:text-primary-400">[Screening]</span> -->
 				{#if showDate && formattedDate}
 					<span class="opacity-50">•</span>
 					<time datetime={screening.showing_date} class="font-medium">
@@ -112,45 +106,22 @@
 
 			<!-- Title -->
 			<h2
-				class="mt-2 leading-snug font-bold tracking-wider group-hover:underline {variant ===
-				'featured'
-					? 'text-2xl md:text-3xl'
-					: variant === 'compact'
-						? 'text-base font-medium'
-						: 'text-xl'}"
+				class="mt-2 leading-snug font-bold tracking-wider group-hover:underline text-xl xl:text-base"
 			>
 				{filmTitle}
 			</h2>
+			{#if director}
+				<div>
+					Directed by {director}, {releaseYear}
+				</div>
+			{/if}
 
 			<!-- Excerpt / Film Description -->
-			{#if filmDescription && variant !== 'compact'}
+			<!-- {#if filmDescription && variant !== 'compact'}
 				<p class="mt-2 line-clamp-3 text-sm leading-relaxed opacity-80">
 					{filmDescription}
 				</p>
-			{/if}
-		</div>
-
-		<!-- Footer: Director & Ticket Status Info -->
-		<div class="mt-4 flex items-center justify-between text-xs tracking-wide border-t border-surface-200-800/60 pt-3">
-			{#if director}
-				<div>
-					Directed by <span class="font-medium">{director}</span>
-				</div>
-			{:else}
-				<div></div>
-			{/if}
-
-			<div>
-				{#if soldOut}
-					<span class="text-error-600 dark:text-error-400 font-bold uppercase tracking-wider">
-						Sold Out
-					</span>
-				{:else}
-					<span class="text-secondary-700 dark:text-secondary-300 font-medium">
-						{formattedTime}
-					</span>
-				{/if}
-			</div>
+			{/if} -->
 		</div>
 	</div>
 </article>

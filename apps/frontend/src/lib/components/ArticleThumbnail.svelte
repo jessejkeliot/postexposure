@@ -31,9 +31,9 @@
 </script>
 
 <article
-	class="group flex flex-col justify-between border-b pb-6 {variant ===
+	class="group flex flex-col justify-between border-b md:border-0 pb-6 {variant ===
 	'featured'
-		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
+		? 'md:grid md:grid-cols-2 md:gap-8'
 		: ''}"
 >
 	<div class="min-w-28">
@@ -46,7 +46,7 @@
 				<img
 					src={coverUrl}
 					alt={article.title}
-					class="h-full w-full object-cover p-4 lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100 md:p-2"
+					class="h-full w-full object-cover lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100"
 					loading="lazy"
 				/>
 			</a>
