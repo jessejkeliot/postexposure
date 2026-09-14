@@ -76,13 +76,13 @@
 		<div>
 			<!-- Film Poster Card / Visual Placeholder -->
 			<div
-				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden border border-surface-200-800 bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
+				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
 			>
 				{#if coverUrl}
 					<img
 						src={coverUrl}
 						alt={coverCaption}
-						class="h-full w-full object-cover lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100"
+						class="h-full w-full inset-shadow-sm inset-shadow-indigo-500/80  object-cover lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100"
 						loading="lazy"
 					/>
 				{:else}
