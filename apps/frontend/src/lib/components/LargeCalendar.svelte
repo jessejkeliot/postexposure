@@ -1,4 +1,6 @@
 <script lang="ts">
+  import ScreeningsIndicatorDot from './ScreeningsIndicatorDot.svelte';
+
 	import { SvelteMap } from 'svelte/reactivity';
 	import { SegmentedControl } from '@skeletonlabs/skeleton-svelte';
 	import { Temporal } from '@js-temporal/polyfill';
@@ -269,9 +271,7 @@
 								{cell.day}
 							</span>
 
-							{#if hasScreenings}
-								<span class="h-2 w-2 rounded-full bg-primary-600"></span>
-							{/if}
+							<ScreeningsIndicatorDot {hasScreenings} {isSelected} size={2}/>
 						</div>
 
 						{#if hasScreenings}

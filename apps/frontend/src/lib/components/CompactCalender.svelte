@@ -6,6 +6,7 @@
 	import type { Screening } from '$lib/types/database';
 	import { isScreeningSoldOut, getRemainingTickets } from '$lib/pocketbase/db';
 	import ScreeningThumbnail from './ScreeningThumbnail.svelte';
+	import ScreeningsIndicatorDot from './ScreeningsIndicatorDot.svelte';
 
 	interface Props {
 		screenings: Screening[];
@@ -190,9 +191,7 @@
 							{date.day}
 						</span>
 						{#if hasScreenings}
-							<span
-								class="w-1.5 h-1.5 rounded-full mt-0.5 {isSelected ? 'bg-primary-400' : 'bg-primary-600'}"
-							></span>
+							<ScreeningsIndicatorDot {hasScreenings} {isSelected}/>
 						{:else}
 							<span class="w-1.5 h-1.5 mt-0.5"></span>
 						{/if}
