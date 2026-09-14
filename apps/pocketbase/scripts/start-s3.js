@@ -32,7 +32,7 @@ const dockerCmd = `docker run -d \
   -p 9001:9001 \
   -e MINIO_ROOT_USER="${accessKey}" \
   -e MINIO_ROOT_PASSWORD="${secretKey}" \
-  minio/minio server /data --console-address ":9001"`;
+  quay.io/minio/minio server /data --console-address ":9001"`;
 
 try {
   const containerId = execSync(dockerCmd).toString().trim();
