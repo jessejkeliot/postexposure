@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { slide } from 'svelte/transition';
 	import DropMenu from './DropMenu.svelte';
 	let { children } = $props();
 
@@ -13,7 +12,7 @@
 
 <div class="min-h-screen w-full flex flex-col">
 	<header class="sticky top-0 z-50 w-full">
-		<nav class="navbar relative z-30 flex w-full flex-row items-center justify-between border-b-2 px-4 py-1 bg-surface-50 dark:bg-surface-950">
+		<nav class="navbar relative z-30 flex w-full flex-row items-center justify-between border-b px-4 py-1 bg-surface-50 dark:bg-surface-950">
 			<button
 				type="button"
 				class="btn btn-icon p-0.5"
