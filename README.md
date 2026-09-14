@@ -14,7 +14,7 @@ TailwindCSS - Styling
 
 - **Node.js** (v20.6+ recommended)
 - **pnpm** (preferred) or **npm**
-- **Docker Desktop** (required for local S3 storage)
+- **Docker Desktop** (required for local S3 storage) (or OrbStack)
 
 ## Getting Started
 
@@ -64,3 +64,12 @@ Open http://localhost:5173/ in your browser of choice
 or if you want to view the page on another device
 Stop the webserver with Ctrl+C and then run
 ```pnpm --filter frontend run dev --host```
+
+### Total Reset
+To totally reset the development environment to its initial state just stop the pocketbase process (ctrl-c in that terminal window) then run:
+```zsh
+rm -rf apps/pocketbase/pb_data
+pnpm --filter pocketbase run dev:s3:delete
+# then optionally reset the .env file with
+cp .env.sample .env
+```
