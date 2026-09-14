@@ -23,5 +23,4 @@
     <section>  
         <CompactCalender screenings={data.screenings}></CompactCalender>
     </section>
-    <section class="w-full h-60"></section>
 </div>

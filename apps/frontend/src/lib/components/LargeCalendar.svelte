@@ -150,7 +150,7 @@
 	});
 </script>
 
-<div class="flex flex-col lg:flex-row gap-4 space-y-6">
+<div class="flex flex-col lg:flex-row gap-4 mb-0">
 	<div class="flex-1">
 		<!-- Top Controls: Month Selector with Skeleton SegmentedControl and Prev/Next -->
 		<div
