@@ -1,16 +1,16 @@
 # Post Exposure Magazine
 
-A modern web application built with SvelteKit and PocketBase.
+A web application for the Post Exposure magazine built with SvelteKit and PocketBase.
 
 ## Stack
 
-Backend Database - PocketBase (SQLite)
-Backend Dev Bucket - MinIO
-Frontend - Sveltekit
-Skeleton - UI Library
-TailwindCSS - Styling
+- Backend Database - [PocketBase (SQLite)](https://pocketbase.io/)
+- Backend Dev Bucket - [MinIO](https://github.com/minio/minio)
+- Frontend - [Sveltekit](https://svelte.dev/docs/kit/introduction)
+- UI Library - [Skeleton](https://www.skeleton.dev/)
+- Styling - [TailwindCSS](https://tailwindcss.com/)
 
-## Prerequisites
+### Prerequisites
 
 - **Node.js** (v20.6+ recommended)
 - **pnpm** (preferred) or **npm**
@@ -25,7 +25,9 @@ Clone the repository, navigate to the root directory, and set up your environmen
 ```zsh
 git clone 
 cd postexposure
+pnpm install
 cp .env.sample .env
+# Replace the sample variables in .env with your keys
 ```
 
 ### Local S3 Storage (MinIO)
@@ -54,6 +56,7 @@ then once the db is running if you want it filled with filler articles run
 To remove all data from the pocketbase backend just run
 ```rm -rf apps/pocketbase/pb_data```
 
+### Frontent Setup
 
 Then in a seperate terminal run 
 ```zsh
@@ -66,7 +69,7 @@ Stop the webserver with Ctrl+C and then run
 ```pnpm --filter frontend run dev --host```
 
 ### Total Reset
-To totally reset the development environment to its initial state just stop the pocketbase process (ctrl-c in that terminal window) then run:
+To totally reset the development environment to its initial state just stop the pocketbase process (Ctrl+C in its terminal window) then run:
 ```zsh
 rm -rf apps/pocketbase/pb_data
 pnpm --filter pocketbase run dev:s3:delete
