@@ -2,6 +2,7 @@
 	import type { Screening } from '$lib/types/database';
 	import { getFilmCoverUrl, getRemainingTickets, isScreeningSoldOut } from '$lib/pocketbase/db';
 	import { Temporal } from '@js-temporal/polyfill';
+	import GrainOverlay from './image-effects/GrainOverlay.svelte';
 
 	interface Props {
 		screening: Screening;
@@ -67,36 +68,44 @@
 </script>
 
 <article
-	class="group flex flex-col justify-between border-b xl:border-b-0 pb-6 border-surface-200-800 {variant ===
+	class="group flex flex-col justify-between border-b border-surface-200-800 pb-6 xl:border-b-0 {variant ===
 	'featured'
 		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
 		: ''}"
 >
-	<div class="min-w-28 flex flex-col h-full justify-between">
+	<div class="flex h-full min-w-28 flex-col justify-between">
 		<div>
 			<!-- Film Poster Card / Visual Placeholder -->
 			<div
 				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
 			>
 				{#if coverUrl}
-					<img
-						src={coverUrl}
-						alt={coverCaption}
-						class="h-full w-full inset-shadow-sm inset-shadow-indigo-500/80  object-cover lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100"
-						loading="lazy"
-					/>
+					<GrainOverlay intensity='medium'>
+						<img
+							src={coverUrl}
+							alt={coverCaption}
+							class="h-full w-full object-cover transition delay-0 duration-220 lg:brightness-95 lg:group-hover:brightness-106 lg:group-hover:saturate-120"
+							loading="lazy"
+						/>
+					</GrainOverlay>
 				{:else}
 					<div class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-						<span class="icon-[boxicons--film] text-2xl sm:text-4xl mb-2 opacity-50 group-hover:scale-110 transition-transform"></span>
+						<span
+							class="mb-2 icon-[boxicons--film] text-2xl opacity-50 transition-transform group-hover:scale-110 sm:text-4xl"
+						></span>
 					</div>
 				{/if}
 
 				{#if soldOut}
-					<div class="absolute top-2 right-2 bg-error-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider shadow">
+					<div
+						class="absolute top-2 right-2 bg-error-600 px-2 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase shadow"
+					>
 						Sold Out
 					</div>
 				{:else if screening.total_tickets}
-					<div class="absolute top-2 right-2 bg-surface-950/80 text-surface-50 dark:bg-surface-50/80 dark:text-surface-950 px-2 py-0.5 text-[10px] font-semibold tracking-wider backdrop-blur-xs">
+					<div
+						class="absolute top-2 right-2 bg-surface-950/80 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-surface-50 backdrop-blur-xs dark:bg-surface-50/80 dark:text-surface-950"
+					>
 						{remainingTickets} tickets left
 					</div>
 				{/if}
@@ -117,7 +126,7 @@
 
 			<!-- Title -->
 			<h2
-				class="mt-2 leading-snug font-bold tracking-wider group-hover:underline text-xl xl:text-base"
+				class="mt-2 text-xl leading-snug font-bold tracking-wider group-hover:underline xl:text-base"
 			>
 				{filmTitle}
 			</h2>
