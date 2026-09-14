@@ -62,6 +62,10 @@ export interface Film {
 	director: string;
 	release_date: string;
 	description?: string;
+	cover_image?: string;
+	expand?: {
+		cover_image?: Media;
+	};
 }
 
 export interface Screening {

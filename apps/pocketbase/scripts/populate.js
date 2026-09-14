@@ -153,16 +153,18 @@ async function populateSeasons(count = 3) {
   return seasons;
 }
 
-async function populateFilmsAndScreenings(count = 8) {
+async function populateFilmsAndScreenings(mediaList, count = 8) {
   console.log(`Seeding ${count} films and screenings...`);
   const films = [];
   for (let i = 0; i < count; i++) {
     const releaseDate = faker.date.past({ years: 50 });
+    const selectedMedia = mediaList && mediaList.length > 0 ? faker.helpers.arrayElement(mediaList) : null;
     const film = await pb.collection('films').create({
       title: faker.music.songName() + ' (' + releaseDate.getFullYear() + ')',
       director: faker.person.fullName(),
       release_date: releaseDate.toISOString(),
-      description: faker.lorem.paragraph()
+      description: faker.lorem.paragraph(),
+      cover_image: selectedMedia ? selectedMedia.id : null,
     });
     films.push(film);
 
@@ -194,7 +196,7 @@ async function main() {
   const authors = await populateAuthors(6);
   await populateArticles(categories, authors, media, 15);
   await populateSeasons(3);
-  await populateFilmsAndScreenings(18);
+  await populateFilmsAndScreenings(media, 18);
 
   console.log('Database population completed successfully!');
 }

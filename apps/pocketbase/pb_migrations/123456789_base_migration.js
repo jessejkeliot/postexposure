@@ -111,6 +111,7 @@ migrate((app) => {
             { name: "description", type: "text", required: false },
             { name: "created", type: "autodate", onCreate: true },
             { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+            // add an image to go with the season
         ]
     });
     app.save(seasons);
@@ -126,8 +127,15 @@ migrate((app) => {
             { name: "director", type: "text", required: true },
             { name: "release_date", type: "date", required: true },
             { name: "description", type: "text", required: false },
+            { 
+                name: "cover_image", 
+                type: "relation", 
+                maxSelect: 1, 
+                collectionId: media.id, // Direct reference to the primary media record
+                cascadeDelete: false 
+            },
             { name: "created", type: "autodate", onCreate: true },
-            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true },
         ]
     });
     app.save(films);

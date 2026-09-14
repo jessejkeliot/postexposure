@@ -33,6 +33,8 @@ To Do:
 - functions might need fixing or the compact calendar because are the dates unaware?
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Temporal
 
+- Add tickets and users to the populate function. Function should show a random username and password to login with and that account will have a ticket or two on it **
+
 ### Home page
 
 Flow:

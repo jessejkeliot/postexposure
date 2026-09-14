@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Screening } from '$lib/types/database';
-	import { getRemainingTickets, isScreeningSoldOut } from '$lib/pocketbase/db';
+	import { getFilmCoverUrl, getRemainingTickets, isScreeningSoldOut } from '$lib/pocketbase/db';
 	import { Temporal } from '@js-temporal/polyfill';
 
 	interface Props {
@@ -17,6 +17,8 @@
 	const filmTitle = $derived(film?.title ?? 'Film Screening');
 	const director = $derived(film?.director);
 	const filmDescription = $derived(film?.description);
+	const coverUrl = $derived(getFilmCoverUrl(film, { thumb: '600x400' }));
+	const coverCaption = $derived(film?.expand?.cover_image?.caption || filmTitle);
 
 	const releaseYear = $derived.by(() => {
 		if (!film?.release_date) return null;
@@ -76,9 +78,18 @@
 			<div
 				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden border border-surface-200-800 bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
 			>
-				<div class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-					<span class="icon-[boxicons--film] text-2xl sm:text-4xl mb-2 opacity-50 group-hover:scale-110 transition-transform"></span>
-				</div>
+				{#if coverUrl}
+					<img
+						src={coverUrl}
+						alt={coverCaption}
+						class="h-full w-full object-cover lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100"
+						loading="lazy"
+					/>
+				{:else}
+					<div class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+						<span class="icon-[boxicons--film] text-2xl sm:text-4xl mb-2 opacity-50 group-hover:scale-110 transition-transform"></span>
+					</div>
+				{/if}
 
 				{#if soldOut}
 					<div class="absolute top-2 right-2 bg-error-600 px-2 py-0.5 text-[10px] font-bold text-white uppercase tracking-wider shadow">

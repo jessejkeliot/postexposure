@@ -17,4 +17,4 @@ build/
 
 # Environment vars
 .env
-apps/pocketbase/.pocketbase-version
+.pocketbase-version

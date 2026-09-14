@@ -248,7 +248,8 @@ export async function getCurrentSeasons(
 
 export async function getAllFilms(client: PocketBase = defaultClient): Promise<Film[]> {
 	return await client.collection('films').getFullList<Film>({
-		sort: 'title'
+		sort: 'title',
+		expand: 'cover_image'
 	});
 }
 
@@ -266,7 +267,7 @@ export async function getScreeningsByDateRange(
 	return await client.collection('screenings').getFullList<Screening>({
 		filter: `showing_date >= "${startIso}" && showing_date <= "${endIso}"`,
 		sort: 'showing_date,showing_time',
-		expand: 'film'
+		expand: 'film,film.cover_image'
 	});
 }
 
@@ -299,7 +300,7 @@ export async function getUpcomingScreenings(
 	return await client.collection('screenings').getList<Screening>(1, limit, {
 		filter: `showing_date >= "${iso}"`,
 		sort: 'showing_date,showing_time',
-		expand: 'film'
+		expand: 'film,film.cover_image'
 	}).then((res) => res.items);
 }
 
@@ -314,7 +315,7 @@ export async function getAllUpcomingScreenings(
 	return await client.collection('screenings').getFullList<Screening>({
 		filter: `showing_date >= "${iso}"`,
 		sort: 'showing_date,showing_time',
-		expand: 'film'
+		expand: 'film,film.cover_image'
 	});
 }
 
@@ -422,6 +423,8 @@ export function getFileUrl(
  * Helper to get the cover image URL for an article,
  * supporting external URLs, expanded media records, or legacy direct file names.
  */
+
+// should be condensed into one shared function
 export function getArticleCoverUrl(
 	article: Article,
 	options: { thumb?: string } = {},
@@ -435,4 +438,19 @@ export function getArticleCoverUrl(
 		return article.cover_image;
 	}
 	return getFileUrl(article, article.cover_image, options, client);
+}
+export function getFilmCoverUrl(
+	film?: Film | null,
+	options: { thumb?: string } = {},
+	client: PocketBase = defaultClient
+): string | null {
+	if (!film) return null;
+	if (film.expand?.cover_image?.file) {
+		return getFileUrl(film.expand.cover_image, film.expand.cover_image.file, options, client);
+	}
+	if (!film.cover_image) return null;
+	if (film.cover_image.startsWith('http://') || film.cover_image.startsWith('https://')) {
+		return film.cover_image;
+	}
+	return getFileUrl(film, film.cover_image, options, client);
 }
