@@ -33,7 +33,7 @@
 				href={resolve(category as any)}
 				id={i.toString()}
 				onclick={() => (showing = false)}
-				class="flex-1 flex justify-center items-center text-2xl md:text-sm text-typo-base-dark capitalize hover:bg-primary-700-300 dark:text-typo-base-light"
+				class="flex-1 flex h2 py-0 justify-center items-center text-2xl md:text-sm text-typo-base-dark capitalize dark:text-typo-base-light"
 				>{category.replace('/', '')}</a
 			>
 		{/each}

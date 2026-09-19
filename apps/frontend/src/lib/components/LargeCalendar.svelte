@@ -163,14 +163,14 @@
 				<button
 					type="button"
 					onclick={prevMonth}
-					class="btn btn-icon border border-surface-300-700 p-1 hover:bg-surface-200-800"
+					class="btn btn-icon preset-tonal-brand"
 					aria-label="Previous Month"
 					title="Previous Month"
 				>
 					<span class="icon-[boxicons--chevron-left] text-lg"></span>
 				</button>
 
-				<h2 class="min-w-24 text-center text-2xl font-bold tracking-wide uppercase sm:text-left">
+				<h2 class="min-w-24 text-center text-lg lg:text-2xl font-bold tracking-wide uppercase sm:text-left">
 					{monthStrings[currentMonth - 1]}
 					{currentYear}
 				</h2>
@@ -178,7 +178,7 @@
 				<button
 					type="button"
 					onclick={nextMonth}
-					class="btn btn-icon border border-surface-300-700 p-1 hover:bg-surface-200-800"
+					class="btn btn-icon preset-tonal-brand"
 					aria-label="Next Month"
 					title="Next Month"
 				>
@@ -188,7 +188,7 @@
 				<button
 					type="button"
 					onclick={goToToday}
-					class="btn border border-surface-300-700 px-2 py-1 text-xs font-semibold tracking-wider uppercase hover:bg-surface-200-800"
+					class="btn font-semibold tracking-wider uppercase preset-tonal-brand"
 				>
 					Today
 				</button>
@@ -199,12 +199,12 @@
 				<SegmentedControl
 					value={activeMonthKey}
 					onValueChange={(details) => handleMonthSelect(details.value)}
-					class="w-full sm:w-auto"
+					class="w-full sm:w-auto p-0"
 				>
-					<SegmentedControl.Control class="flex flex-row border p-0.5">
+					<SegmentedControl.Control class="flex flex-row m-0 p-0 gap-0">
 						<SegmentedControl.Indicator class="bg-surface-950-50 text-surface-contrast-100" />
 						{#each monthOptions as opt (opt.value)}
-							<SegmentedControl.Item value={opt.value} class="px-2 py-1 text-xs">
+							<SegmentedControl.Item value={opt.value} class="btn preset-tonal-brand">
 								<SegmentedControl.ItemText class="text-xs">{opt.label}</SegmentedControl.ItemText>
 								<SegmentedControl.ItemHiddenInput />
 							</SegmentedControl.Item>
@@ -280,7 +280,7 @@
 							<div class="mt-1 space-y-0.5">
 								{#each dayScreenings.slice(0, 2) as s (s.id)}
 									<div
-										class="truncate bg-surface-200 px-1 py-0.5 text-[10px] font-medium dark:bg-surface-800"
+										class="truncate bg-brand-dark px-1 py-0.5 text-[10px] font-medium"
 									>
 										{s.expand?.film?.title ?? 'Film'}
 									</div>
