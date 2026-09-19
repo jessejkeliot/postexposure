@@ -12,14 +12,14 @@
 
 <div class="space-y-6 py-4">
 	<!-- Header -->
-	<header class="flex flex-col sm:flex-row sm:items-end justify-between border-b pb-4 gap-4">
-		<div>
+	<header class="flex flex-col xs:flex-row justify-between items-center border-b pb-4 gap-4">
+		<div class="h-fit">
 			<h1 class="text-3xl sm:text-5xl font-bold tracking-tight uppercase">Calendar</h1>
 		</div>
-		<div>
+		<div class="h-full flex flex-col justify-center">
 			<a
 				href={resolve('/screenings')}
-				class="btn text-xs font-semibold uppercase tracking-wider border border-surface-300-700 hover:bg-surface-200-800 px-3 py-1.5 inline-flex items-center gap-1.5"
+				class="btn preset-outlined btn-icon-xs sm:btn-icon-md"
 			>
 				<span class="icon-[boxicons--list-ul]"></span>
 				List View
