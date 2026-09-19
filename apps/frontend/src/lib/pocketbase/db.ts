@@ -252,6 +252,31 @@ export async function getAllFilms(client: PocketBase = defaultClient): Promise<F
 		expand: 'cover_image'
 	});
 }
+export async function getFilmsByDirector(director:string, limit=6,  client: PocketBase = defaultClient): Promise<Film[]> {
+	return await client.collection('films').getList<Film>(1, limit, {
+		filter: `director="${director}"`,
+		expand: 'cover_image'
+	}).then((res)=> res.items);
+}
+export async function getRecentFilms(
+	limit = 10,
+	client: PocketBase = defaultClient
+): Promise<Film[]> {
+	const res = await client.collection('films').getList<Film>(1, limit, {
+		sort: 'title',
+		expand: 'cover_image',
+	});
+	return res.items;
+}
+export async function getFilmById(id:string, client: PocketBase = defaultClient): Promise<Film| null> {
+	try {
+		return await client.collection('films').getOne<Film>(id,{
+			expand: 'cover_image'
+		});
+	} catch {
+		return null
+	}
+}
 
 /**
  * Fetch screenings within a specific Temporal date range.
@@ -270,6 +295,38 @@ export async function getScreeningsByDateRange(
 		expand: 'film,film.cover_image'
 	});
 }
+export async function getScreeningsBySeason(
+	screening: Screening,
+	client: PocketBase = defaultClient
+): Promise<Screening[]> {
+	return await client.collection('screenings').getFullList<Screening>({
+		filter: `season="${screening.season}"`,
+		sort: 'showing_date,showing_time',
+		expand: 'film,film.cover_image'
+	});
+}
+export async function getScreeningsByDirector(
+	director: string,
+	limit:number,
+	client: PocketBase = defaultClient
+): Promise<Screening[]> {
+	return await client.collection('screenings').getList<Screening>(1, limit, {
+		filter: `film.director =="${director}"`,
+		sort: 'showing_date,showing_time',
+		expand: 'film'
+	}).then((res)=> res.items);
+}
+export async function getScreeningById(
+	id: string,
+	client: PocketBase = defaultClient
+): Promise<Screening | null> {
+	try {
+		return await client.collection('screenings').getOne<Screening>(id);
+	}catch {
+		return null;
+	}
+}
+
 
 /**
  * Fetch screenings for the current week using Temporal PlainDate calculations.
