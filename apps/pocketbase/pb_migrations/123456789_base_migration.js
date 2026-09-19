@@ -209,7 +209,7 @@ migrate((app) => {
         updateRule: "",
         deleteRule: "",
         fields: [
-            { name: "content", type: "editor" },
+            { name: "content", type: "editor", required:true },
             { name: "published_at", type: "date" },
             { name: "created", type: "autodate", onCreate: true },
             { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
