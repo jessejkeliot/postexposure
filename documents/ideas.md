@@ -24,6 +24,7 @@ https://harpers.org/
 - buy tickets to screenings
 - screenings able to be sold out
 - add banner
+- cli that uses a film api to automatically add film to the database
 
 ###
 To Do:
