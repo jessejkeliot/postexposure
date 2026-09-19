@@ -111,7 +111,7 @@
         filter:blur(20);
 		pointer-events:none;
 		opacity: 0.7;
-        animation: 200ms infinite noise ease;
+        animation: 500ms infinite noise linear;
         animation-play-state: running;
         /* animation-play-state: paused; */
 	}
