@@ -152,6 +152,15 @@ async function populateSeasons(count = 3) {
   }
   return seasons;
 }
+async function populateAbout() {
+  console.log(`Seeding about section`);
+
+    const about = await pb.collection('about').create({
+      content: `<h3>*This is a placeholder about section*</h3><p>${faker.lorem.paragraph}</p>`,
+      published_at: faker.date.recent({ days: 60 }).toISOString()
+    });
+    about.push(season);
+  }
 
 async function populateFilmsAndScreenings(mediaList, count = 8) {
   console.log(`Seeding ${count} films and screenings...`);
@@ -192,6 +201,7 @@ async function main() {
   await authenticate();
   console.log('Authenticated successfully.');
   const media = await populateMedia(40);
+  const about = await populateAbout();
   const categories = await populateCategories();
   const authors = await populateAuthors(6);
   await populateArticles(categories, authors, media, 15);

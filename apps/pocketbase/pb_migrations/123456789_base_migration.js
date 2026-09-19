@@ -200,6 +200,24 @@ migrate((app) => {
     });
     app.save(tickets);
 
+    const about = new Collection({
+        type: "base",
+        name: "about",
+        listRule: "",
+        viewRule: "",
+        createRule: "",
+        updateRule: "",
+        deleteRule: "",
+        fields: [
+            { name: "content", type: "editor" },
+            { name: "published_at", type: "date" },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+        ]
+    });
+    app.save(about);
+
+
 }, (app) => {
     // Down migration (rollback behavior if needed)
     try {
@@ -211,5 +229,6 @@ migrate((app) => {
         app.delete(app.findCollectionByNameOrId("films"));
         app.delete(app.findCollectionByNameOrId("seasons"));
         app.delete(app.findCollectionByNameOrId("media"));
+        app.delete(app.findCollectionByNameOrId("about"));
     } catch {}
 });
