@@ -168,7 +168,7 @@ async function populateFilmsAndScreenings(mediaList, seasons, count = 8) {
     const releaseDate = faker.date.past({ years: 50 });
     const selectedMedia = mediaList && mediaList.length > 0 ? faker.helpers.arrayElement(mediaList) : null;
     const film = await pb.collection('films').create({
-      title: faker.music.songName() + ' (' + releaseDate.getFullYear() + ')',
+      title: faker.music.songName(),
       director: faker.person.fullName(),
       release_date: releaseDate.toISOString(),
       description: faker.lorem.paragraph(),
