@@ -102,10 +102,10 @@
 	<div class="flex flex-col space-y-2">
 		<button
 			type="button"
-			class="btn preset-tonal flex items-center justify-between"
+			class="btn preset-tonal flex items-center justify-between w-1/4 min-w-fit"
 			onclick={() => (showMoreDates = !showMoreDates)}
 		>
-			<span>{showMoreDates ? 'Hide dates' : 'Show more dates'}</span>
+			<span>More Dates</span>
 			<span class={`icon-[boxicons--chevron-right] ${showMoreDates ? 'rotate-90' : 'rotate-0'} duration-300`}></span>
 		</button>
 
