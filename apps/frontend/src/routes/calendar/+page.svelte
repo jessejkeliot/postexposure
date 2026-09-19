@@ -15,7 +15,6 @@
 	<header class="flex flex-col sm:flex-row sm:items-end justify-between border-b pb-4 gap-4">
 		<div>
 			<h1 class="text-3xl sm:text-5xl font-bold tracking-tight uppercase">Calendar</h1>
-			<p class="text-sm opacity-70 mt-1">Browse scheduled cinema screenings by month and day.</p>
 		</div>
 		<div>
 			<a

@@ -118,17 +118,17 @@
 <!-- Compact Calendar Widget -->
 <div class="flex flex-col items-center justify-between gap-4 p-0 w-full max-w-3xl mx-auto">
 	<!-- Header Bar: Dynamic Label, Prev/Next buttons, and Link to Full Calendar -->
-	<div class="flex flex-row items-center justify-between w-full">
-		<div class="flex items-center gap-2">
+	<div class="flex flex-row items-center justify-between w-full gap-4">
+		<div class="flex flex-row justify-between items-center gap-2 flex-9 max-w-2xl">
 			<h2 class="text-2xl sm:text-3xl italic font-normal tracking-wide">
 				{headerLabel}
 			</h2>
-			<div class="flex items-center gap-1 ml-2">
+			<div class="flex items-center gap-1 ml-2 p-0">
 				<button
 					type="button"
 					onclick={prevWeek}
 					disabled={activeWeekIndex === 0}
-					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 text-xs"
+					class="btn btn-icon-xl preset-outlined disabled:opacity-25"
 					aria-label="Previous week"
 					title="Previous week"
 				>
@@ -138,7 +138,7 @@
 					type="button"
 					onclick={nextWeek}
 					disabled={activeWeekIndex >= weeks.length - 1}
-					class="btn btn-icon p-1 border border-surface-300-700 hover:bg-surface-200-800 disabled:opacity-25 text-xs"
+					class="btn btn-icon-xl preset-outlined disabled:opacity-25"
 					aria-label="Next week"
 					title="Next week"
 				>
@@ -148,13 +148,15 @@
 		</div>
 
 		<!-- Link to Larger Calendar -->
+		 <div class="flex-1 flex flex-row justify-end items-center">
 		<a
 			href={resolve('/calendar')}
 			title="Full Calendar"
-			class="text-xs tracking-wider font-semibold opacity-70 hover:opacity-100 hover:underline flex items-center gap-1 text-primary-600 dark:text-primary-400"
+			class="btn btn-icon-xl preset-outlined text-base flex items-center justify-end"
 		>
-			<span class="icon-[boxicons--calendar] btn btn-preset-filled btn-icon-xl"></span>
+			<span class="icon-[boxicons--calendar]"></span>
 		</a>
+		</div>
 	</div>
 
 	<!-- Horizontal Slideable/Scrollable Multi-Week Row -->
@@ -211,8 +213,6 @@
 		{#if selectedDayScreenings.length > 0}
 			<div class="divide-y divide-surface-200-800">
 				{#each selectedDayScreenings as screening (screening.id)}
-					{@const soldOut = isScreeningSoldOut(screening)}
-					{@const remaining = getRemainingTickets(screening)}
 					<ScreeningThumbnail {screening} variant='compact'/>
 				{/each}
 			</div>
