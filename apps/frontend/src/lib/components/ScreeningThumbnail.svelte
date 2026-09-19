@@ -2,6 +2,7 @@
 	import type { Screening } from '$lib/types/database';
 	import { getFilmCoverUrl, getRemainingTickets, isScreeningSoldOut } from '$lib/pocketbase/db';
 	import { Temporal } from '@js-temporal/polyfill';
+	import { resolve } from '$app/paths';
 	import GrainOverlay from './image-effects/GrainOverlay.svelte';
 
 	interface Props {
@@ -34,14 +35,14 @@
 		try {
 			const instant = Temporal.Instant.from(screening.showing_date);
 			const zdt = instant.toZonedDateTimeISO(tz);
-			return new Intl.DateTimeFormat('en-US', {
+			return new Intl.DateTimeFormat('en-UK', {
 				weekday: 'short',
 				month: 'short',
 				day: 'numeric',
 				year: 'numeric'
 			}).format(new Date(zdt.epochMilliseconds));
 		} catch {
-			return new Intl.DateTimeFormat('en-US', {
+			return new Intl.DateTimeFormat('en-UK', {
 				weekday: 'short',
 				month: 'short',
 				day: 'numeric',
@@ -73,11 +74,13 @@
 		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
 		: ''}"
 >
-	<div class="flex h-full min-w-28 flex-col justify-between">
+	<a class="flex h-full min-w-2xs flex-col justify-between"
+		href={resolve(`/calendar/${film?.id}/${screening.id}`)}
+	>
 		<div>
 			<!-- Film Poster Card / Visual Placeholder -->
 			<div
-				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
+				class="group relative mb-4 block aspect-16/10 min-w-2xs overflow-hidden bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
 			>
 				{#if coverUrl}
 					<GrainOverlay intensity='medium'>
@@ -143,5 +146,5 @@
 				</p>
 			{/if} -->
 		</div>
-	</div>
+	</a>
 </article>

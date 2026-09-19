@@ -73,6 +73,7 @@ export interface Screening {
 	created: string;
 	updated: string;
 	film: string;
+	season: string;
 	showing_date: string;
 	showing_time: string;
 	total_tickets?: number;
@@ -80,6 +81,7 @@ export interface Screening {
 	tickets_available?: number;
 	expand?: {
 		film?: Film;
+		season?: Season;
 	};
 }
 

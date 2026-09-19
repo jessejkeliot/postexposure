@@ -7,6 +7,7 @@
 	import { isScreeningSoldOut, getRemainingTickets } from '$lib/pocketbase/db';
 	import ScreeningThumbnail from './ScreeningThumbnail.svelte';
 	import ScreeningsIndicatorDot from './ScreeningsIndicatorDot.svelte';
+	import NoScreeningsBox from './NoScreeningsBox.svelte';
 
 	interface Props {
 		screenings: Screening[];
@@ -217,9 +218,7 @@
 				{/each}
 			</div>
 		{:else}
-			<p class="text-center text-sm opacity-50 py-4">
-				No screenings scheduled for {selectedDateTemporal ? selectedDateTemporal.toString() : 'this date'}.
-			</p>
+			<NoScreeningsBox></NoScreeningsBox>
 		{/if}
 	</div>
 </div>

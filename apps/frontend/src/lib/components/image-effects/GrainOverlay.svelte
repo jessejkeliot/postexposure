@@ -1,16 +1,24 @@
 <!-- Adapted from https://codepen.io/abjt14/pen/PoRwxjo -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
 
 	type Intensity = 'fine' | 'medium' | 'coarse';
 
-	interface Props {
+	interface Props extends HTMLAttributes<HTMLDivElement> {
 		intensity?: Intensity;
 		children?: Snippet;
 		class?: string;
+		overlayClass?: string;
 	}
 
-	let { intensity = 'fine', children, class: className = '' }: Props = $props();
+	let {
+		intensity = 'fine',
+		children,
+		class: className = '',
+		overlayClass = '',
+		...restProps
+	}: Props = $props();
 
 	// Maps intensity to the corresponding SVG filter ID
 	const filterId = $derived(`ifx-grain-${intensity}`);
@@ -95,36 +103,35 @@
 </svg>
 
 <!-- Container applying the selected filter to all child elements -->
-<div class="w-fit h-fit group">
+<div class="relative h-full w-full overflow-hidden group {className}" {...restProps}>
 	{#if children}
-        <div class="absolute w-full h-full" id="noise-bg"></div>
+		<div class="noise-bg absolute inset-0 pointer-events-none {overlayClass}" aria-hidden="true"></div>
 		{@render children()}
 	{/if}
 </div>
 <style>
-	#noise-bg {
-        z-index: 20;
+	.noise-bg {
+		z-index: 20;
 		background: transparent
 			url("$lib/assets/noise2.png") repeat 0 0;
 		background-repeat: repeat;
-        background-size: calc(1200px - 50cqw) auto;
-        filter:blur(20);
-		pointer-events:none;
+		background-size: calc(1200px - 50cqw) auto;
+		pointer-events: none;
 		opacity: 0.7;
-        animation: 500ms infinite noise linear;
-        animation-play-state: running;
-        /* animation-play-state: paused; */
+		animation: 300ms infinite noise linear;
+		animation-play-state: running;
+		/* animation-play-state: paused; */
 	}
-    .group:hover #noise-bg{
-        /* animation-play-state: running; */
-        opacity: 0.9;
-    }
-    @media (prefers-reduced-motion: reduce) {
-        #noise-bg {
-        animation-play-state: paused;
-        /* animation-play-state: paused; */
+	.group:hover .noise-bg {
+		/* animation-play-state: running; */
+		opacity: 0.9;
 	}
-    }
+	@media (prefers-reduced-motion: reduce) {
+		.noise-bg {
+			animation-play-state: paused;
+			/* animation-play-state: paused; */
+		}
+	}
 
 	@keyframes noise {
 		0%,

@@ -155,6 +155,14 @@ migrate((app) => {
                 collectionId: films.id,
                 cascadeDelete: false 
             },
+            { 
+                name: "season", 
+                type: "relation",
+                required: true,
+                maxSelect: 1, 
+                collectionId: seasons.id,
+                cascadeDelete: false 
+            },
             { name: "showing_date", type: "date", required: true },
             { name: "showing_time", type: "date", required: true },
             { name: "total_tickets", type: "number", min: 0 },
