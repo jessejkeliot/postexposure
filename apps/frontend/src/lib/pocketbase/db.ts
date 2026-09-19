@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import type PocketBase from 'pocketbase';
 import { pb as defaultClient } from './client';
-import type { Article, Author, Category, Film, Media, Screening, Season, Ticket } from '$lib/types/database';
+import type { About, Article, Author, Category, Film, Media, Screening, Season, Ticket } from '$lib/types/database';
 import { getWeekDateRange } from '$lib/funcs/dates';
 
 export interface PaginationOptions {
@@ -453,4 +453,13 @@ export function getFilmCoverUrl(
 		return film.cover_image;
 	}
 	return getFileUrl(film, film.cover_image, options, client);
+}
+
+export async function getRecentAbout(
+	client: PocketBase = defaultClient
+): Promise<About> {
+	const res = await client.collection('about').getFirstListItem<About>("", {
+		sort: '-updated',
+	});
+	return res;
 }

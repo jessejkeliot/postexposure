@@ -95,3 +95,10 @@ export interface Ticket {
 		user?: unknown;
 	};
 }
+
+export interface About {
+	content: string;
+	published_at?: string;
+	created: string;
+	updated: string;
+}
