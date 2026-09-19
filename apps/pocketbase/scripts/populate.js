@@ -161,7 +161,7 @@ async function populateAbout() {
     });
   }
 
-async function populateFilmsAndScreenings(mediaList, count = 8) {
+async function populateFilmsAndScreenings(mediaList, seasons, count = 8) {
   console.log(`Seeding ${count} films and screenings...`);
   const films = [];
   for (let i = 0; i < count; i++) {
@@ -175,7 +175,7 @@ async function populateFilmsAndScreenings(mediaList, count = 8) {
       cover_image: selectedMedia ? selectedMedia.id : null,
     });
     films.push(film);
-
+    const season = faker.helpers.arrayElement(seasons);
     // Create 1-3 screenings for each film
     const screeningCount = faker.number.int({ min: 1, max: 3 });
     for (let j = 0; j < screeningCount; j++) {
@@ -184,6 +184,7 @@ async function populateFilmsAndScreenings(mediaList, count = 8) {
       const ticketsSold = faker.number.int({ min: 0, max: totalTickets });
       await pb.collection('screenings').create({
         film: film.id,
+        season: season.id,
         showing_date: showDate.toISOString(),
         showing_time: showDate.toISOString(),
         total_tickets: totalTickets,
@@ -204,8 +205,8 @@ async function main() {
   const categories = await populateCategories();
   const authors = await populateAuthors(6);
   await populateArticles(categories, authors, media, 15);
-  await populateSeasons(3);
-  await populateFilmsAndScreenings(media, 18);
+  const seasons = await populateSeasons(3);
+  await populateFilmsAndScreenings(media, seasons, 18);
 
   console.log('Database population completed successfully!');
 }
