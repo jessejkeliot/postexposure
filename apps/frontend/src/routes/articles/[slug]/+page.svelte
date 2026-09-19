@@ -5,8 +5,6 @@
 
 	let { data }: PageProps = $props();
 
-	const coverUrl = $derived(getArticleCoverUrl(data.article, { thumb: '1200x800' }));
-
 	const formattedDate = $derived(
 		data.article.published_at
 			? new Intl.DateTimeFormat('en-US', {
@@ -72,10 +70,10 @@
 	</header>
 
 	<!-- Cover Image -->
-	{#if coverUrl}
+	{#if data.coverUrl}
 		<figure class="mb-10 overflow-hidden bg-surface-100-900">
 			<img
-				src={coverUrl}
+				src={data.coverUrl}
 				alt={data.article.title}
 				class="h-auto w-full object-cover max-h-[500px]"
 			/>

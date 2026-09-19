@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Article } from '$lib/types/database';
-import { getArticleBySlug, getArticlesByCategory, getRecentArticles } from '$lib/pocketbase/db';
+import { getArticleBySlug, getArticleCoverUrl, getArticlesByCategory, getRecentArticles } from '$lib/pocketbase/db';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const article = await getArticleBySlug(params.slug);
@@ -9,6 +9,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!article) {
 		error(404, 'Article not found');
 	}
+	const coverUrl = getArticleCoverUrl(article, { thumb: '1200x800' });
 
 	// Fetch related articles (same category if available, excluding current article)
 	let moreArticles: Article[] = [];
@@ -30,6 +31,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	return {
 		article,
+		coverUrl,
 		moreArticles
 	};
 };
