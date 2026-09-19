@@ -31,9 +31,7 @@ export const monthCodeStrings = [
 	'Dec'
 ];
 
-export const dayCodeStrings = [
-	"Mon",'Tue', "Wed", 'Thu', 'Fri', "Sat", "Sun"
-]
+export const dayCodeStrings = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 /**
  * Returns monday and sunday of the week for a given date as Temporal.PlainDate.
@@ -61,11 +59,7 @@ export function getArrayOfDates(
 ): Temporal.PlainDate[] {
 	const dates: Temporal.PlainDate[] = [];
 
-	for (
-		let date = start;
-		Temporal.PlainDate.compare(date, end) <= 0;
-		date = date.add({ days: 1 })
-	) {
+	for (let date = start; Temporal.PlainDate.compare(date, end) <= 0; date = date.add({ days: 1 })) {
 		dates.push(date);
 	}
 
@@ -142,4 +136,28 @@ export function getYearOfWeeks(
 	}
 
 	return weeks;
+}
+
+export function formatScreeningDate(showingDate: string) {
+	try {
+		return new Intl.DateTimeFormat('en-UK', {
+			weekday: 'short',
+			day: 'numeric',
+			month: 'short',
+			year: 'numeric'
+		}).format(new Date(showingDate));
+	} catch {
+		return showingDate;
+	}
+}
+
+export function formatScreeningTime(showingTime: string) {
+	try {
+		return new Intl.DateTimeFormat('en-UK', {
+			hour: 'numeric',
+			minute: 'numeric'
+		}).format(new Date(showingTime));
+	} catch {
+		return showingTime;
+	}
 }

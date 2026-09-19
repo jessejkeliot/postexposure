@@ -1,4 +1,6 @@
 <script lang="ts">
+  import BuyTicketLink from './BuyTicketLink.svelte';
+
 	import type { PageProps } from './$types';
 	import { getFilmCoverUrl } from '$lib/pocketbase/db';
 	import ScreeningThumbnail from '$lib/components/ScreeningThumbnail.svelte';
@@ -13,42 +15,12 @@
 
 	const coverUrl = $derived(getFilmCoverUrl(data.film, { thumb: '1200x800' }));
 
-	function formatScreeningDate(showingDate: string) {
-		try {
-			return new Intl.DateTimeFormat('en-UK', {
-				weekday: 'short',
-				day: 'numeric',
-				month: 'short',
-				year: 'numeric'
-			}).format(new Date(showingDate));
-		} catch {
-			return showingDate;
-		}
-	}
-
-	function formatScreeningTime(showingTime: string) {
-		try {
-			return new Intl.DateTimeFormat('en-UK', {
-				hour: 'numeric',
-				minute: 'numeric'
-			}).format(new Date(showingTime));
-		} catch {
-			return showingTime;
-		}
-	}
-
 	const formattedFilmDate = $derived(
 		data.film.release_date
 			? new Intl.DateTimeFormat('en-UK', {
 					year: 'numeric'
 				}).format(new Date(data.film.release_date))
 			: null
-	);
-	const formattedScreeningDate = $derived(
-		data.screening.showing_date ? formatScreeningDate(data.screening.showing_date) : null
-	);
-	const formattedScreeningTime = $derived(
-		data.screening.showing_time ? formatScreeningTime(data.screening.showing_time) : null
 	);
 	const directorName = $derived(data.film.director);
 </script>
@@ -92,12 +64,7 @@
 		{/if}
 	</div>
 	<!-- Buy tickets to screening section -->
-	<a
-		class="btn cursor-grab preset-outlined font-bold text-wrap uppercase"
-		href={resolve(`/calendar/${data.film.id}/${data.screening.id}/buy`)}
-	>
-		Order Tickets - {formattedScreeningDate}, {formattedScreeningTime}
-	</a>
+	<BuyTicketLink screening={data.screening} film={data.film}></BuyTicketLink>
 	<!-- Buy tickets to other days section -->
 	<div class="flex flex-col space-y-2">
 		<button
@@ -113,12 +80,7 @@
 			{#if data.upcomingFilmScreenings && data.upcomingFilmScreenings.length > 0}
 				<div class="flex flex-col space-y-2 pt-1">
 					{#each data.upcomingFilmScreenings as otherScreening (otherScreening.id)}
-						<a
-							class="btn cursor-grab preset-outlined font-bold text-wrap uppercase"
-							href={resolve(`/calendar/${data.film.id}/${otherScreening.id}/buy`)}
-						>
-							<span>Order Tickets - {formatScreeningDate(otherScreening.showing_date)}, {formatScreeningTime(otherScreening.showing_time)}</span>
-						</a>
+						<BuyTicketLink screening={otherScreening} film={otherScreening.expand?.film}></BuyTicketLink>
 					{/each}
 				</div>
 			{:else}
