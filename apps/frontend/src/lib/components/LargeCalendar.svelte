@@ -1,4 +1,6 @@
 <script lang="ts">
+  import NoScreeningsBox from './NoScreeningsBox.svelte';
+
   import ScreeningsIndicatorDot from './ScreeningsIndicatorDot.svelte';
 
 	import { SvelteMap } from 'svelte/reactivity';
@@ -311,13 +313,7 @@
 				{/each}
 			</div>
 		{:else}
-			<div class="border border-dashed border-surface-200-800 p-6 py-12 text-center">
-				<span class="mx-auto mb-1 icon-[boxicons--calendar-x] block text-3xl opacity-40"></span>
-				<p class="text-sm font-medium opacity-80">No screenings on this day</p>
-				<p class="mt-1 text-xs opacity-50">
-					Select a highlighted date with a dot marker above to view its schedule.
-				</p>
-			</div>
+			<NoScreeningsBox></NoScreeningsBox>
 		{/if}
 	</section>
 </div>
