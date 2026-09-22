@@ -36,7 +36,7 @@
 				<span class="icon-[boxicons--search] btn-icon-xl"></span>
 			</button>
 		</nav>
-		<DropMenu categories={["/essays", "/issues", "/archive", "/screenings", "/about"]} bind:showing />
+		<DropMenu categories={["/issues", "/archive", "/screenings", "/tickets", "/subscribe", "/about",]} bind:showing />
 	</header>
 	<div class="h-full w-full flex-1 px-4 mb-4">
 		{@render children()}
