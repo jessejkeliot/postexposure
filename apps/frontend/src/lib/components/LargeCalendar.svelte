@@ -280,7 +280,7 @@
 							<div class="mt-1 space-y-0.5">
 								{#each dayScreenings.slice(0, 2) as s (s.id)}
 									<div
-										class="truncate bg-brand-dark px-1 py-0.5 text-[10px] font-medium"
+										class="truncate bg-surface-200-800 px-1 py-0.5 text-[10px] font-medium"
 									>
 										{s.expand?.film?.title ?? 'Film'}
 									</div>
