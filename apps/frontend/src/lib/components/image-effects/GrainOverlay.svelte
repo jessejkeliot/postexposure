@@ -7,6 +7,7 @@
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		intensity?: Intensity;
+		animated?: boolean;
 		children?: Snippet;
 		class?: string;
 		overlayClass?: string;
@@ -14,6 +15,7 @@
 
 	let {
 		intensity = 'fine',
+		animated = true,
 		children,
 		class: className = '',
 		overlayClass = '',
@@ -105,7 +107,7 @@
 <!-- Container applying the selected filter to all child elements -->
 <div class="relative h-full w-full overflow-hidden group {className}" {...restProps}>
 	{#if children}
-		<div class="noise-bg absolute inset-0 pointer-events-none {overlayClass}" aria-hidden="true"></div>
+		<div class="noise-bg {animated ? "" : "paused"} absolute inset-0 pointer-events-none {overlayClass}" aria-hidden="true"></div>
 		{@render children()}
 	{/if}
 </div>
@@ -125,6 +127,9 @@
 	.group:hover .noise-bg {
 		/* animation-play-state: running; */
 		opacity: 0.9;
+	}
+	.paused {
+		animation-play-state: paused;
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.noise-bg {
