@@ -26,6 +26,9 @@ export const actions: Actions = {
 	checkout: async ({ request, params, locals, url }) => {
 		const film = await getFilmById(params.filmId);
 		const screening = await getScreeningById(params.screeningId);
+		
+		
+
 
 		if (!film || !screening) {
 			return fail(404, { error: 'Film or screening not found' });
@@ -61,7 +64,6 @@ export const actions: Actions = {
 			filmId: film.id,
 			filmTitle: film.title,
 			showingDate: screening.showing_date ? formatScreeningDate(screening.showing_date) : '',
-			showingTime: screening.showing_date ? formatScreeningTime(screening.showing_date) : '',
 			unitPrice,
 			quantity,
 			userId,

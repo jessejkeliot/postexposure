@@ -28,7 +28,6 @@ export interface CreateTicketCheckoutParams {
 	filmId: string;
 	filmTitle: string;
 	showingDate: string;
-	showingTime: string;
 	unitPrice: number; // in GBP (e.g. 12.00)
 	quantity: number;
 	userId?: string;
@@ -50,7 +49,6 @@ export async function createTicketCheckoutSession(params: CreateTicketCheckoutPa
 		filmId,
 		filmTitle,
 		showingDate,
-		showingTime,
 		unitPrice,
 		quantity,
 		userId,
@@ -60,7 +58,7 @@ export async function createTicketCheckoutSession(params: CreateTicketCheckoutPa
 	} = params;
 
 	const unitAmountPence = Math.round(unitPrice * 100);
-	const description = `${showingDate} at ${showingTime}${isMemberDiscount ? ' (20% Member Discount)' : ''}`;
+	const description = `${showingDate} ${isMemberDiscount ? ' (20% Member Discount)' : ''}`;
 
 	// If the ticket price is £0 (free ticket or 100% discount), skip Stripe and proceed directly to success page
 	if (unitAmountPence > 0 && stripe && isRealStripeKey) {
