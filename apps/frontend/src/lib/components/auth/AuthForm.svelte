@@ -83,7 +83,7 @@
 	<button
 		type="submit"
 		disabled={loading}
-		class="mt-2 flex w-full items-center justify-center gap-2 bg-surface-950 py-3 text-sm font-bold tracking-widest text-surface-50 uppercase transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-surface-50 dark:text-surface-950 cursor-pointer"
+		class="btn preset-filled mt-2 flex w-full items-center justify-center gap-2 py-3 text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer"
 	>
 		{#if loading}
 			<span class="icon-[boxicons--loader-lines] animate-spin text-base"></span>

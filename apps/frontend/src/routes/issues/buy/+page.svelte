@@ -160,7 +160,7 @@
 			<button
 				type="submit"
 				disabled={isSubmitting}
-				class="w-full flex items-center justify-center gap-2 border-2 border-surface-950 dark:border-surface-50 bg-surface-950 dark:bg-surface-50 text-surface-50 dark:text-surface-950 py-3.5 text-sm uppercase tracking-widest font-bold hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+				class="btn preset-filled w-full py-3.5 text-sm uppercase tracking-widest font-bold flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
 			>
 				{#if isSubmitting}
 					<span class="icon-[boxicons--loader-lines] animate-spin text-base"></span>

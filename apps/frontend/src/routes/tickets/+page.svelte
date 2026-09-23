@@ -70,7 +70,7 @@
 			<div class="pt-2">
 				<a
 					href={resolve('/login?redirect=/tickets')}
-					class="btn bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950 font-bold uppercase tracking-widest text-xs px-8 py-3"
+					class="btn preset-filled font-bold uppercase tracking-widest text-xs px-8 py-3"
 				>
 					Sign In to Access Tickets
 				</a>
@@ -91,11 +91,11 @@
 						type="text"
 						bind:value={manualTicketId}
 						placeholder="Scan or enter Ticket ID / Verification URL..."
-						class="flex-1 border bg-surface-50 dark:bg-surface-900 px-3 py-2 text-xs  outline-none focus:border-primary-500"
+						class="flex-1 border bg-surface-50 dark:bg-surface-900 px-3 py-2 text-xs outline-none focus:border-primary-500"
 					/>
 					<button
 						type="submit"
-						class="btn bg-primary-600 text-white font-bold uppercase tracking-wider text-xs px-4 py-2 hover:bg-primary-700"
+						class="btn preset-filled-primary-500 font-bold uppercase tracking-wider text-xs px-4 py-2"
 					>
 						Verify Ticket
 					</button>
@@ -109,21 +109,21 @@
 				<button
 					type="button"
 					onclick={() => (filter = 'all')}
-					class="px-3 py-1 font-bold uppercase tracking-wider transition-colors {filter === 'all' ? 'bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950' : 'hover:opacity-75'}"
+					class="btn {filter === 'all' ? 'preset-filled' : 'preset-outlined'} text-xs font-bold uppercase tracking-wider px-3 py-1"
 				>
 					All ({data.tickets.length})
 				</button>
 				<button
 					type="button"
 					onclick={() => (filter = 'active')}
-					class="px-3 py-1 font-bold uppercase tracking-wider transition-colors {filter === 'active' ? 'bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950' : 'hover:opacity-75'}"
+					class="btn {filter === 'active' ? 'preset-filled' : 'preset-outlined'} text-xs font-bold uppercase tracking-wider px-3 py-1"
 				>
 					Active ({data.tickets.filter((t) => !t.scanned_at && t.status !== 'used').length})
 				</button>
 				<button
 					type="button"
 					onclick={() => (filter = 'used')}
-					class="px-3 py-1 font-bold uppercase tracking-wider transition-colors {filter === 'used' ? 'bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950' : 'hover:opacity-75'}"
+					class="btn {filter === 'used' ? 'preset-filled' : 'preset-outlined'} text-xs font-bold uppercase tracking-wider px-3 py-1"
 				>
 					Admitted ({data.tickets.filter((t) => t.scanned_at || t.status === 'used').length})
 				</button>

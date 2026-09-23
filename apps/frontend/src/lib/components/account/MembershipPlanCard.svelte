@@ -95,7 +95,7 @@
 				<div class="pt-2">
 					<a
 						href={resolve('/subscribe')}
-						class="btn inline-flex items-center gap-2 bg-surface-950 px-6 py-2.5 text-xs font-bold tracking-widest text-surface-50 uppercase dark:bg-surface-50 dark:text-surface-950"
+						class="btn preset-filled inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold tracking-widest uppercase"
 					>
 						<span>Explore Membership Plans</span>
 						<span class="icon-[boxicons--arrow-to-right]"></span>
@@ -113,7 +113,7 @@
 			<form method="POST" action="?/cancelSubscription" use:enhance>
 				<button
 					type="submit"
-					class="text-[11px] text-error-600 uppercase hover:underline dark:text-error-400 cursor-pointer"
+					class="btn preset-outlined-error-500 text-[11px] font-bold uppercase px-3 py-1 cursor-pointer"
 					onclick={(e) => {
 						if (!confirm('Are you sure you want to cancel your active membership?')) {
 							e.preventDefault();

@@ -30,7 +30,7 @@
 			<div class="flex flex-wrap gap-2">
 				<a
 					href={resolve('/tickets')}
-					class="btn bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950 text-xs uppercase font-bold tracking-widest px-4 py-2 hover:opacity-90"
+					class="btn preset-filled text-xs uppercase font-bold tracking-widest px-4 py-2"
 				>
 					<span class="icon-[boxicons--qr]"></span>
 					<span>View in My Tickets</span>

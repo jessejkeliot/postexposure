@@ -59,7 +59,7 @@
 		<div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
 			<a
 				href={resolve('/issues')}
-				class="btn bg-surface-950 text-surface-50 dark:bg-surface-50 dark:text-surface-950 font-bold uppercase tracking-widest text-xs px-6 py-3"
+				class="btn preset-filled font-bold uppercase tracking-widest text-xs px-6 py-3"
 			>
 				Read Magazine Issues
 			</a>

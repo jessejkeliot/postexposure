@@ -135,7 +135,7 @@
 				<button
 					type="button"
 					onclick={copyLink}
-					class="text-[11px]  underline uppercase hover:text-primary-500 transition-colors"
+					class="btn preset-outlined text-[10px] px-2 py-0.5 uppercase cursor-pointer"
 					title="Copy admin verification link"
 				>
 					{copied ? 'Copied link!' : 'Copy Link'}

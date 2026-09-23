@@ -72,7 +72,7 @@
 		<button
 			type="submit"
 			disabled={updating}
-			class="w-full bg-surface-950 py-2.5 font-bold tracking-wider text-surface-50 uppercase transition-opacity hover:opacity-90 disabled:opacity-50 dark:bg-surface-50 dark:text-surface-950 cursor-pointer"
+			class="btn preset-filled w-full py-2.5 font-bold tracking-wider uppercase disabled:opacity-50 cursor-pointer"
 		>
 			{updating ? 'Saving...' : 'Update Details'}
 		</button>

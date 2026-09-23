@@ -75,9 +75,7 @@
 			type="button"
 			disabled={loadingTier !== null}
 			onclick={() => onSubscribe(tier)}
-			class="w-full py-3.5 {tier.popular
-				? 'bg-surface-950 font-bold tracking-widest text-surface-50 uppercase dark:bg-surface-50 dark:text-surface-950'
-				: 'btn preset-outlined font-bold tracking-widest uppercase'} flex items-center justify-center gap-2 text-xs transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer"
+			class="btn {tier.popular ? 'preset-filled' : 'preset-outlined'} w-full py-3.5 font-bold tracking-widest uppercase flex items-center justify-center gap-2 text-xs transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer"
 		>
 			{#if loadingTier === tier.id}
 				<span class="icon-[boxicons--loader-lines] animate-spin text-base"></span>

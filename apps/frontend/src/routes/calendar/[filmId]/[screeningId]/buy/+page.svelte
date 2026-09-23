@@ -140,7 +140,7 @@
 				<button
 					type="submit"
 					disabled={isSubmitting || isSoldOut}
-					class="flex w-full items-center justify-center gap-2 border-2 border-surface-950 bg-surface-950 py-3.5 text-sm font-bold tracking-widest text-surface-50 uppercase transition-opacity hover:opacity-90 disabled:opacity-50 dark:border-surface-50 dark:bg-surface-50 dark:text-surface-950 cursor-pointer"
+					class="btn preset-filled w-full py-3.5 text-sm font-bold tracking-widest uppercase flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
 				>
 					{#if isSubmitting}
 						<span class="icon-[boxicons--loader-lines] animate-spin text-base"></span>

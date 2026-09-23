@@ -14,7 +14,7 @@
 			<button
 				type="button"
 				onclick={() => (deleteStep = 1)}
-				class="btn self-start border border-error-600 px-4 py-2 text-xs font-bold tracking-wider text-error-600 uppercase transition-colors hover:bg-error-600 hover:text-white sm:self-auto dark:border-error-400 dark:text-error-400 cursor-pointer"
+				class="btn preset-outlined-error-500 self-start px-4 py-2 text-xs font-bold tracking-wider uppercase sm:self-auto cursor-pointer"
 			>
 				<span class="icon-[boxicons--trash]"></span>
 				<span>Delete Account</span>
@@ -40,14 +40,14 @@
 				<button
 					type="button"
 					onclick={() => (deleteStep = 2)}
-					class="btn bg-error-600 px-4 py-2 text-xs font-bold tracking-wider text-white uppercase transition-colors hover:bg-error-700 cursor-pointer"
+					class="btn preset-filled-error-500 px-4 py-2 text-xs font-bold tracking-wider uppercase cursor-pointer"
 				>
 					Yes, I Want to Proceed
 				</button>
 				<button
 					type="button"
 					onclick={() => (deleteStep = 0)}
-					class="btn border border-surface-300 px-4 py-2 text-xs font-bold tracking-wider uppercase transition-colors hover:bg-surface-200 dark:border-surface-700 dark:hover:bg-surface-800 cursor-pointer"
+					class="btn preset-outlined px-4 py-2 text-xs font-bold tracking-wider uppercase cursor-pointer"
 				>
 					Cancel
 				</button>
@@ -81,7 +81,7 @@
 				<button
 					type="submit"
 					disabled={deleting}
-					class="btn flex items-center gap-2 bg-error-600 px-5 py-2.5 text-xs font-bold tracking-wider text-white uppercase transition-colors hover:bg-error-700 disabled:opacity-50 cursor-pointer"
+					class="btn preset-filled-error-500 flex items-center gap-2 px-5 py-2.5 text-xs font-bold tracking-wider uppercase disabled:opacity-50 cursor-pointer"
 				>
 					{#if deleting}
 						<span class="icon-[boxicons--loader-lines] animate-spin text-sm"></span>
@@ -95,7 +95,7 @@
 					type="button"
 					disabled={deleting}
 					onclick={() => (deleteStep = 0)}
-					class="btn border border-surface-300 px-4 py-2.5 text-xs font-bold tracking-wider uppercase transition-colors hover:bg-surface-200 disabled:opacity-50 dark:border-surface-700 dark:hover:bg-surface-800 cursor-pointer"
+					class="btn preset-outlined px-4 py-2.5 text-xs font-bold tracking-wider uppercase disabled:opacity-50 cursor-pointer"
 				>
 					Cancel & Keep Account
 				</button>

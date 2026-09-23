@@ -111,7 +111,7 @@
 	<div class="flex flex-col justify-between gap-3 pt-2 sm:flex-row">
 		<a
 			href={resolve('/tickets')}
-			class="btn bg-surface-950 px-6 py-3 text-center text-xs font-bold tracking-widest text-surface-50 uppercase dark:bg-surface-50 dark:text-surface-950"
+			class="btn preset-filled px-6 py-3 text-center text-xs font-bold tracking-widest uppercase"
 		>
 			Scan Next Ticket
 		</a>
