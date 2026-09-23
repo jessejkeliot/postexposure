@@ -19,7 +19,7 @@
 			</p>
 		{/each}
 	</section>
-    <SeasonBanner/>
+    <!-- <SeasonBanner/> -->
     <section>  
         <CompactCalender screenings={data.screenings}></CompactCalender>
     </section>

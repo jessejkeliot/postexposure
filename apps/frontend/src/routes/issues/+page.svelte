@@ -1,19 +1,11 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { PageProps } from './$types';
 	import IssueCoverFlip from '$lib/components/IssueCoverFlip.svelte';
 	import IssueThumbnail from '$lib/components/IssueThumbnail.svelte';
 	import { getIssuePdfUrl } from '$lib/pocketbase/db';
 
 	let { data }: PageProps = $props();
-
-	let heroPurchased = $state(false);
-
-	function handleHeroBuy() {
-		heroPurchased = true;
-		setTimeout(() => {
-			heroPurchased = false;
-		}, 3500);
-	}
 
 	const latestIssue = $derived(data.latestIssue);
 	const latestPdfUrl = $derived(latestIssue ? getIssuePdfUrl(latestIssue) : null);
@@ -41,7 +33,7 @@
 		<div>
 			<h1 class="text-3xl sm:text-5xl font-bold tracking-tight uppercase">Issues</h1>
 		</div>
-		<!-- <div class="flex items-center gap-2 text-xs font-mono opacity-80">
+		<!-- <div class="flex items-center gap-2 text-xs  opacity-80">
 			<span class="inline-block h-2 w-2 rounded-full bg-primary-500 animate-pulse"></span>
 			<span>{data.allIssues.length} {data.allIssues.length === 1 ? 'Edition' : 'Editions'} Available</span>
 		</div> -->
@@ -66,14 +58,8 @@
 					<div class="space-y-4">
 						<!-- Badges -->
 						<div class="flex flex-wrap items-center gap-2 text-xs font-bold tracking-wider uppercase">
-							<span class="bg-primary-600 text-white px-2.5 py-1 text-[11px] shadow-sm">
-								Latest Release
-							</span>
-							<span class="border border-surface-300 dark:border-surface-700 px-2 py-0.5 text-[11px] opacity-80">
-								Current Print Run
-							</span>
 							{#if formattedLatestDate}
-								<span class="font-mono text-xs opacity-75">• {formattedLatestDate}</span>
+								<span class=" text-xs opacity-75">{formattedLatestDate}</span>
 							{/if}
 						</div>
 
@@ -96,44 +82,20 @@
 					<!-- Pricing and Purchase Call to Action -->
 					<div class="space-y-4 pt-2">
 						<div class="flex items-baseline gap-3">
-							<span class="text-3xl sm:text-4xl font-extrabold font-mono tracking-tight">
+							<span class="text-3xl sm:text-4xl font-extrabold  tracking-tight">
 								£{latestIssue.price.toFixed(2)}
-							</span>
-							<span class="text-xs uppercase tracking-wider opacity-60">
-								(Includes domestic shipping & digital download)
 							</span>
 						</div>
 
 						<div class="flex flex-col sm:flex-row gap-3">
 							<!-- Purchase Button -->
-							<button
-								type="button"
-								onclick={handleHeroBuy}
-								class="btn btn-lg font-bold uppercase tracking-wider flex-1 transition-all duration-200 {heroPurchased
-									? 'preset-filled-success-500 text-white'
-									: 'preset-filled-brand hover:brightness-105'}"
+							<a
+								href={resolve(`/issues/buy?issueId=${latestIssue.id}`)}
+								class="btn btn-lg font-bold uppercase tracking-wider flex-1 transition-all duration-200 preset-filled-brand sm:preset-outlined text-wrap hover:brightness-105 flex items-center justify-center gap-2"
 							>
-								{#if heroPurchased}
-									<span class="icon-[boxicons--check] text-xl"></span>
-									Order Placed! Thank you
-								{:else}
-									<span class="icon-[boxicons--cart-add] text-xl"></span>
-									Purchase Latest Magazine
-								{/if}
-							</button>
-
-							<!-- Digital PDF Download Link -->
-							{#if latestPdfUrl}
-								<a
-									href={latestPdfUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="btn btn-lg preset-outlined font-bold uppercase tracking-wider hover:preset-filled transition-all duration-200 flex items-center justify-center gap-2"
-								>
-									<span class="icon-[boxicons--file-pdf] text-xl"></span>
-									Download PDF
-								</a>
-							{/if}
+								<span class="icon-[boxicons--cart] text-xl"></span>
+								<span>Purchase PDF Edition</span>
+							</a>
 						</div>
 					</div>
 				</div>

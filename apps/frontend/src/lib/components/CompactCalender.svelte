@@ -109,9 +109,10 @@
 		selectedDateStr = date.toString();
 		await tick();
 		if (screeningsContainer) {
-			const items = screeningsContainer.querySelectorAll('[data-screening-item]');
-			const target = items.length > 0 ? items[0] : screeningsContainer;
-			target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			const firstItem = screeningsContainer.querySelector('[data-screening-item]') as HTMLElement | null;
+			if (firstItem) {
+				firstItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			}
 		}
 	}
 </script>
@@ -214,7 +215,9 @@
 		{#if selectedDayScreenings.length > 0}
 			<div class="divide-y divide-surface-200-800">
 				{#each selectedDayScreenings as screening (screening.id)}
-					<ScreeningThumbnail {screening} variant='compact'/>
+					<div data-screening-item>
+						<ScreeningThumbnail {screening} variant="compact" />
+					</div>
 				{/each}
 			</div>
 		{:else}

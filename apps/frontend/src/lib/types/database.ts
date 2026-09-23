@@ -76,6 +76,7 @@ export interface Screening {
 	season: string;
 	showing_date: string;
 	showing_time: string;
+	price?: number;
 	total_tickets?: number;
 	tickets_sold?: number;
 	tickets_available?: number;
@@ -85,16 +86,49 @@ export interface Screening {
 	};
 }
 
+export interface User {
+	id: string;
+	created?: string;
+	updated?: string;
+	email: string;
+	name: string;
+	role?: 'user' | 'admin' | string;
+	isSubscribed?: boolean;
+	subscriptionTier?: string;
+	subscriptionExpiresAt?: string;
+	emailVerified?: boolean;
+	image?: string;
+	avatar?: string;
+}
+
 export interface Ticket {
 	id: string;
 	created: string;
 	updated: string;
 	screening: string;
 	user: string;
-	status?: string;
+	status?: 'active' | 'used' | 'cancelled' | string;
+	scanned_at?: string;
 	expand?: {
 		screening?: Screening;
-		user?: unknown;
+		user?: User;
+	};
+}
+
+export interface Purchase {
+	id: string;
+	created: string;
+	updated: string;
+	user: string;
+	type: 'subscription' | 'ticket' | 'issue' | string;
+	item_id?: string;
+	item_name: string;
+	amount: number;
+	currency?: string;
+	status: 'completed' | 'pending' | 'refunded' | string;
+	stripe_payment_id?: string;
+	expand?: {
+		user?: User;
 	};
 }
 

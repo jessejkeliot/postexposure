@@ -165,6 +165,7 @@ migrate((app) => {
             },
             { name: "showing_date", type: "date", required: true },
             { name: "showing_time", type: "date", required: true },
+            { name: "price", type: "number", min: 0 },
             { name: "total_tickets", type: "number", min: 0 },
             { name: "tickets_sold", type: "number", min: 0 },
             { name: "tickets_available", type: "number", min: 0 },
@@ -176,6 +177,16 @@ migrate((app) => {
 
     // 8. Tickets Collection
     const users = app.findCollectionByNameOrId("users");
+    users.fields.add(new TextField({ name: "role" }));
+    users.fields.add(new BoolField({ name: "isSubscribed" }));
+    users.fields.add(new TextField({ name: "subscriptionTier" }));
+    users.fields.add(new TextField({ name: "subscriptionExpiresAt" }));
+    users.fields.add(new BoolField({ name: "emailVerified" }));
+    users.fields.add(new DateField({ name: "createdAt" }));
+    users.fields.add(new DateField({ name: "updatedAt" }));
+    users.fields.add(new URLField({ name: "image" }));
+    app.save(users);
+
     const tickets = new Collection({
         type: "base",
         name: "tickets",
@@ -202,6 +213,7 @@ migrate((app) => {
                 cascadeDelete: true
             },
             { name: "status", type: "text" },
+            { name: "scanned_at", type: "date" },
             { name: "created", type: "autodate", onCreate: true },
             { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
@@ -267,9 +279,109 @@ migrate((app) => {
     });
     app.save(issues);
 
+    // 11. Better-Auth Sessions Collection
+    const sessions = new Collection({
+        type: "base",
+        name: "sessions",
+        listRule: null,
+        viewRule: null,
+        createRule: null,
+        updateRule: null,
+        deleteRule: null,
+        fields: [
+            { name: "userId", type: "text", required: true },
+            { name: "token", type: "text", required: true, unique: true },
+            { name: "expiresAt", type: "date", required: true },
+            { name: "ipAddress", type: "text" },
+            { name: "userAgent", type: "text" },
+            { name: "createdAt", type: "date", required: true },
+            { name: "updatedAt", type: "date", required: true }
+        ]
+    });
+    app.save(sessions);
+
+    // 12. Better-Auth Accounts Collection
+    const accounts = new Collection({
+        type: "base",
+        name: "accounts",
+        listRule: null,
+        viewRule: null,
+        createRule: null,
+        updateRule: null,
+        deleteRule: null,
+        fields: [
+            { name: "userId", type: "text", required: true },
+            { name: "accountId", type: "text", required: true },
+            { name: "providerId", type: "text", required: true },
+            { name: "accessToken", type: "text" },
+            { name: "refreshToken", type: "text" },
+            { name: "idToken", type: "text" },
+            { name: "accessTokenExpiresAt", type: "date" },
+            { name: "refreshTokenExpiresAt", type: "date" },
+            { name: "scope", type: "text" },
+            { name: "password", type: "text" },
+            { name: "createdAt", type: "date", required: true },
+            { name: "updatedAt", type: "date", required: true }
+        ]
+    });
+    app.save(accounts);
+
+    // 13. Better-Auth Verifications Collection
+    const verifications = new Collection({
+        type: "base",
+        name: "verifications",
+        listRule: null,
+        viewRule: null,
+        createRule: null,
+        updateRule: null,
+        deleteRule: null,
+        fields: [
+            { name: "identifier", type: "text", required: true },
+            { name: "value", type: "text", required: true },
+            { name: "expiresAt", type: "date", required: true },
+            { name: "createdAt", type: "date" },
+            { name: "updatedAt", type: "date" }
+        ]
+    });
+    app.save(verifications);
+
+    // 14. Purchases Collection
+    const purchases = new Collection({
+        type: "base",
+        name: "purchases",
+        listRule: "",
+        viewRule: "",
+        createRule: "",
+        updateRule: "",
+        deleteRule: "",
+        fields: [
+            {
+                name: "user",
+                type: "relation",
+                collectionId: users.id,
+                maxSelect: 1,
+                cascadeDelete: false
+            },
+            { name: "type", type: "text", required: true },
+            { name: "item_id", type: "text" },
+            { name: "item_name", type: "text", required: true },
+            { name: "amount", type: "number", required: true, min: 0 },
+            { name: "currency", type: "text" },
+            { name: "status", type: "text", required: true },
+            { name: "stripe_payment_id", type: "text" },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+        ]
+    });
+    app.save(purchases);
+
 }, (app) => {
     // Down migration (rollback behavior if needed)
     try {
+        app.delete(app.findCollectionByNameOrId("purchases"));
+        app.delete(app.findCollectionByNameOrId("verifications"));
+        app.delete(app.findCollectionByNameOrId("accounts"));
+        app.delete(app.findCollectionByNameOrId("sessions"));
         app.delete(app.findCollectionByNameOrId("issues"));
         app.delete(app.findCollectionByNameOrId("tickets"));
         app.delete(app.findCollectionByNameOrId("articles"));

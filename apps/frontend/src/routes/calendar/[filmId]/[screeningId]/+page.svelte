@@ -1,5 +1,5 @@
 <script lang="ts">
-  import BuyTicketLink from './BuyTicketLink.svelte';
+	import BuyTicketLink from './BuyTicketLink.svelte';
 
 	import type { PageProps } from './$types';
 	import { getFilmCoverUrl } from '$lib/pocketbase/db';
@@ -23,13 +23,14 @@
 			: null
 	);
 	const directorName = $derived(data.film.director);
+	const seasonName = $derived(data.screening.expand?.season?.title);
 </script>
 
 <svelte:head>
 	<title>{data.film.title} | Post Exposure</title>
 </svelte:head>
 
-<div class="flex flex-col mx-auto max-w-4xl space-y-4 sm:py-4">
+<div class="mx-auto flex max-w-4xl flex-col space-y-4 sm:py-4">
 	<!-- Cover Image -->
 	{#if coverUrl}
 		<GrainOverlay intensity="medium" class="my-4">
@@ -50,7 +51,17 @@
 
 		{#if directorName}
 			<div class="flex items-center">
-				<p class="text-sm font-medium">By {directorName}</p>
+				<p class="text-sm font-medium">Directed by {directorName}</p>
+			</div>
+		{/if}
+		{#if seasonName}
+			<div class="flex items-center">
+				<p class="text-sm font-medium">{seasonName}</p>
+			</div>
+		{/if}
+		{#if formattedFilmDate}
+			<div class="flex items-center">
+				<p class="text-sm font-medium">{formattedFilmDate}</p>
 			</div>
 		{/if}
 	</header>
@@ -66,30 +77,33 @@
 	<!-- Buy tickets to screening section -->
 	<BuyTicketLink screening={data.screening} film={data.film}></BuyTicketLink>
 	<!-- Buy tickets to other days section -->
-	<div class="flex flex-col space-y-2">
-		<button
-			type="button"
-			class="btn preset-tonal flex items-center justify-between w-1/4 min-w-fit"
-			onclick={() => (showMoreDates = !showMoreDates)}
-		>
-			<span>More Dates</span>
-			<span class={`icon-[boxicons--chevron-right] ${showMoreDates ? 'rotate-90' : 'rotate-0'} duration-300`}></span>
-		</button>
+	{#if showMoreDates}
+		<div class="flex flex-col space-y-2">
+			<button
+				type="button"
+				class="btn flex w-1/4 min-w-fit items-center justify-between preset-tonal"
+				onclick={() => (showMoreDates = !showMoreDates)}
+			>
+				<span>More Dates</span>
+				<span
+					class={`icon-[boxicons--chevron-right] ${showMoreDates ? 'rotate-90' : 'rotate-0'} duration-300`}
+				></span>
+			</button>
 
-		{#if showMoreDates}
 			{#if data.upcomingFilmScreenings && data.upcomingFilmScreenings.length > 0}
 				<div class="flex flex-col space-y-2 pt-1">
 					{#each data.upcomingFilmScreenings as otherScreening (otherScreening.id)}
-						<BuyTicketLink screening={otherScreening} film={otherScreening.expand?.film}></BuyTicketLink>
+						<BuyTicketLink screening={otherScreening} film={otherScreening.expand?.film}
+						></BuyTicketLink>
 					{/each}
 				</div>
 			{:else}
-				<p class="text-sm opacity-70 italic py-2">
+				<p class="py-2 text-sm italic opacity-70">
 					No other upcoming dates scheduled for this film.
 				</p>
 			{/if}
-		{/if}
-	</div>
+		</div>
+	{/if}
 	<!-- More films Section -->
 	{#if data.moreScreenings.length > 0}
 		<section class="mt-16 border-t border-surface-200-800 pt-12">

@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import type PocketBase from 'pocketbase';
 import { pb as defaultClient } from './client';
-import type { About, Article, Author, Category, Film, Issue, Media, Screening, Season, Ticket } from '$lib/types/database';
+import type { About, Article, Author, Category, Film, Issue, Media, Screening, Season, Ticket, Purchase, User } from '$lib/types/database';
 import { getWeekDateRange } from '$lib/funcs/dates';
 
 export interface PaginationOptions {
@@ -427,9 +427,9 @@ export async function decrementTicketsAvailable(
 	client: PocketBase = defaultClient
 ): Promise<Screening> {
 	const current = await client.collection('screenings').getOne<Screening>(screeningId);
-	const total = current.total_tickets ?? 0;
 	const currentSold = current.tickets_sold ?? 0;
 	const remaining = getRemainingTickets(current);
+	const total = current.total_tickets ?? (current.tickets_available !== undefined ? current.tickets_available + currentSold : remaining + currentSold);
 
 	if (total > 0 && remaining < count) {
 		throw new Error(`Cannot decrement tickets: only ${remaining} tickets available for this screening.`);
@@ -461,6 +461,180 @@ export async function bookTicket(
 		status: 'active'
 	});
 	return { ticket, screening: updatedScreening };
+}
+
+/**
+ * Fetch all tickets belonging to a specific user.
+ */
+export async function getUserTickets(
+	userId: string,
+	client: PocketBase = defaultClient
+): Promise<Ticket[]> {
+	try {
+		return await client.collection('tickets').getFullList<Ticket>({
+			filter: `user="${userId}"`,
+			sort: '-created',
+			expand: 'screening,screening.film,screening.film.cover_image,screening.season'
+		});
+	} catch {
+		return [];
+	}
+}
+
+/**
+ * Fetch a single ticket by its ID with full relation expansions.
+ */
+export async function getTicketById(
+	ticketId: string,
+	client: PocketBase = defaultClient
+): Promise<Ticket | null> {
+	try {
+		return await client.collection('tickets').getOne<Ticket>(ticketId, {
+			expand: 'screening,screening.film,screening.film.cover_image,screening.season,user'
+		});
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Scans a ticket: marks status as used and records scanned_at timestamp.
+ * Returns null if ticket does not exist, or an object indicating status.
+ */
+export async function scanTicket(
+	ticketId: string,
+	client: PocketBase = defaultClient
+): Promise<{ success: boolean; alreadyScanned: boolean; ticket?: Ticket; error?: string }> {
+	try {
+		const ticket = await client.collection('tickets').getOne<Ticket>(ticketId, {
+			expand: 'screening,screening.film,screening.film.cover_image,screening.season,user'
+		});
+
+		if (!ticket) {
+			return { success: false, alreadyScanned: false, error: 'Ticket not found' };
+		}
+
+		if (ticket.scanned_at || ticket.status === 'used') {
+			return { success: false, alreadyScanned: true, ticket };
+		}
+
+		const updatedTicket = await client.collection('tickets').update<Ticket>(ticketId, {
+			status: 'used',
+			scanned_at: new Date().toISOString()
+		}, {
+			expand: 'screening,screening.film,screening.film.cover_image,screening.season,user'
+		});
+
+		return { success: true, alreadyScanned: false, ticket: updatedTicket };
+	} catch (err) {
+		return { success: false, alreadyScanned: false, error: err instanceof Error ? err.message : 'Unknown error' };
+	}
+}
+
+/**
+ * Create a new ticket and decrement available seats on the screening.
+ */
+export async function createTicket(
+	data: {
+		screening: string;
+		user?: string;
+		status?: 'valid' | 'used' | 'cancelled' | string;
+	},
+	client: PocketBase = defaultClient
+): Promise<Ticket> {
+	const ticket = await client.collection('tickets').create<Ticket>({
+		screening: data.screening,
+		user: data.user || undefined,
+		status: data.status || 'valid'
+	}, {
+		expand: 'screening,screening.film,screening.film.cover_image,screening.season,user'
+	});
+
+	// Update screening ticket availability counters
+	try {
+		const screening = await client.collection('screenings').getOne<Screening>(data.screening);
+		const currentSold = screening.tickets_sold ?? 0;
+		const total = screening.total_tickets ?? (screening.tickets_available !== undefined ? screening.tickets_available + currentSold : 50);
+		const newSold = currentSold + 1;
+		const newAvailable = Math.max(0, total - newSold);
+		await client.collection('screenings').update(data.screening, {
+			tickets_sold: newSold,
+			tickets_available: newAvailable
+		});
+	} catch (err) {
+		console.warn('Could not update screening inventory:', err);
+	}
+
+	return ticket;
+}
+
+/**
+ * Fetch purchase history for a given user.
+ */
+export async function getUserPurchases(
+	userId: string,
+	client: PocketBase = defaultClient
+): Promise<Purchase[]> {
+	try {
+		return await client.collection('purchases').getFullList<Purchase>({
+			filter: `user="${userId}"`,
+			sort: '-created'
+		});
+	} catch {
+		return [];
+	}
+}
+
+/**
+ * Record a new purchase.
+ */
+export async function createPurchase(
+	data: {
+		user: string;
+		type: string;
+		item_id?: string;
+		item_name: string;
+		amount: number;
+		currency?: string;
+		status: string;
+		stripe_payment_id?: string;
+	},
+	client: PocketBase = defaultClient
+): Promise<Purchase> {
+	return await client.collection('purchases').create<Purchase>(data);
+}
+
+/**
+ * Fetch a purchase record by Stripe Payment / Session ID.
+ */
+export async function getPurchaseByStripeId(
+	stripePaymentId: string,
+	client: PocketBase = defaultClient
+): Promise<Purchase | null> {
+	try {
+		return await client.collection('purchases').getFirstListItem<Purchase>(
+			`stripe_payment_id="${stripePaymentId}"`
+		);
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Update user subscription status in PocketBase.
+ */
+export async function updateUserSubscription(
+	userId: string,
+	isSubscribed: boolean,
+	subscriptionTier = 'supporter',
+	subscriptionExpiresAt = '',
+	client: PocketBase = defaultClient
+): Promise<User> {
+	return await client.collection('users').update<User>(userId, {
+		isSubscribed,
+		subscriptionTier,
+		subscriptionExpiresAt
+	});
 }
 
 /**

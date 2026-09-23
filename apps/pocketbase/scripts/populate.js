@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { hashPassword } from 'better-auth/crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -182,11 +183,13 @@ async function populateFilmsAndScreenings(mediaList, seasons, count = 8) {
       const showDate = faker.date.soon({ days: 90 });
       const totalTickets = faker.helpers.arrayElement([40, 50, 60, 80, 100]);
       const ticketsSold = faker.number.int({ min: 0, max: totalTickets });
+      const price = faker.helpers.arrayElement([10.00, 12.00, 14.00, 15.00, 18.00]);
       await pb.collection('screenings').create({
         film: film.id,
         season: season.id,
         showing_date: showDate.toISOString(),
         showing_time: showDate.toISOString(),
+        price: price,
         total_tickets: totalTickets,
         tickets_sold: ticketsSold,
         tickets_available: totalTickets - ticketsSold
@@ -275,6 +278,143 @@ async function populateIssues(mediaList, count = 6) {
   return issues;
 }
 
+async function populateUsersAndTickets() {
+  console.log('Seeding demo users, tickets, and purchases...');
+
+  const testUsers = [
+    {
+      email: 'admin@postexposure.film',
+      password: 'Password123!',
+      passwordConfirm: 'Password123!',
+      name: 'Admin Curator',
+      role: 'admin',
+      isSubscribed: true,
+      subscriptionTier: 'curator',
+      subscriptionExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+      emailVerified: true
+    },
+    {
+      email: 'member@postexposure.film',
+      password: 'Password123!',
+      passwordConfirm: 'Password123!',
+      name: 'Alex Rivers',
+      role: 'user',
+      isSubscribed: true,
+      subscriptionTier: 'supporter',
+      subscriptionExpiresAt: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString(),
+      emailVerified: true
+    },
+    {
+      email: 'viewer@postexposure.film',
+      password: 'Password123!',
+      passwordConfirm: 'Password123!',
+      name: 'Morgan Lee',
+      role: 'user',
+      isSubscribed: false,
+      subscriptionTier: '',
+      emailVerified: true
+    }
+  ];
+
+  const createdUsers = [];
+  const nowStr = new Date().toISOString();
+  for (const u of testUsers) {
+    try {
+      let userRecord = await pb.collection('users').getFirstListItem(`email="${u.email}"`).catch(() => null);
+      if (!userRecord) {
+        userRecord = await pb.collection('users').create(u);
+      } else {
+        userRecord = await pb.collection('users').update(userRecord.id, {
+          role: u.role,
+          isSubscribed: u.isSubscribed,
+          subscriptionTier: u.subscriptionTier,
+          subscriptionExpiresAt: u.subscriptionExpiresAt || '',
+          emailVerified: u.emailVerified
+        });
+      }
+      createdUsers.push(userRecord);
+
+      // Seed corresponding Better-Auth credential account
+      const hashedPassword = await hashPassword(u.password);
+      const existingAccount = await pb.collection('accounts').getFirstListItem(`userId="${userRecord.id}" && providerId="credential"`).catch(() => null);
+      if (!existingAccount) {
+        await pb.collection('accounts').create({
+          userId: userRecord.id,
+          accountId: userRecord.id,
+          providerId: 'credential',
+          password: hashedPassword,
+          createdAt: nowStr,
+          updatedAt: nowStr
+        });
+      } else {
+        await pb.collection('accounts').update(existingAccount.id, {
+          accountId: userRecord.id,
+          password: hashedPassword,
+          updatedAt: nowStr
+        });
+      }
+    } catch (err) {
+      console.warn(`User seeding notice for ${u.email}:`, err.message);
+    }
+  }
+
+  // Find some screenings to create tickets
+  try {
+    const screenings = await pb.collection('screenings').getList(1, 10, {
+      sort: '-showing_date',
+      expand: 'film'
+    });
+
+    if (screenings.items.length > 0 && createdUsers.length > 0) {
+      const user = createdUsers[1] || createdUsers[0]; // member
+      
+      // Active ticket
+      const s1 = screenings.items[0];
+      const activeTicket = await pb.collection('tickets').create({
+        screening: s1.id,
+        user: user.id,
+        status: 'active'
+      }).catch(() => null);
+
+      // Scanned ticket (for testing already scanned state)
+      const s2 = screenings.items[1] || screenings.items[0];
+      const scannedTicket = await pb.collection('tickets').create({
+        screening: s2.id,
+        user: user.id,
+        status: 'used',
+        scanned_at: new Date(Date.now() - 3600000).toISOString()
+      }).catch(() => null);
+
+      // Create initial purchase records
+      await pb.collection('purchases').create({
+        user: user.id,
+        type: 'subscription',
+        item_id: 'sub_supporter_monthly',
+        item_name: 'Supporter Membership (Monthly)',
+        amount: 15.00,
+        currency: 'usd',
+        status: 'completed',
+        stripe_payment_id: 'pi_demo_sub_' + Math.random().toString(36).substring(2, 9)
+      }).catch(() => null);
+
+      if (activeTicket) {
+        await pb.collection('purchases').create({
+          user: user.id,
+          type: 'ticket',
+          item_id: activeTicket.id,
+          item_name: `Screening Ticket: ${s1.expand?.film?.title || 'Film Screening'}`,
+          amount: 12.00,
+          currency: 'usd',
+          status: 'completed',
+          stripe_payment_id: 'pi_demo_tkt_' + Math.random().toString(36).substring(2, 9)
+        }).catch(() => null);
+      }
+    }
+  } catch (err) {
+    console.warn('Ticket/Purchase seeding notice:', err.message);
+  }
+}
+
 async function main() {
   console.log(`Connecting to PocketBase at ${pbUrl}...`);
   await authenticate();
@@ -287,6 +427,7 @@ async function main() {
   const seasons = await populateSeasons(3);
   await populateFilmsAndScreenings(media, seasons, 18);
   await populateIssues(media, 6);
+  await populateUsersAndTickets();
 
   console.log('Database population completed successfully!');
 }

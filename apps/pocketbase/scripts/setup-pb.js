@@ -38,7 +38,7 @@ const forcePathStyle = process.env.S3_FORCE_PATH_STYLE !== undefined
   : isLocalEndpoint;
 
 // Helper: Poll health endpoint until PocketBase responds
-async function waitForPocketBase(retries = 20, delay = 250) {
+async function waitForPocketBase(retries = 50, delay = 500) {
   for (let i = 0; i < retries; i++) {
     try {
       const res = await fetch(`${PB_URL}/api/health`);

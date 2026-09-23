@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { Issue } from '$lib/types/database';
 	import { getIssuePdfUrl } from '$lib/pocketbase/db';
 	import IssueCoverFlip from './IssueCoverFlip.svelte';
@@ -21,15 +22,6 @@
 
 	const pdfUrl = $derived(getIssuePdfUrl(issue));
 	const formattedPrice = $derived(`£${issue.price.toFixed(2)}`);
-
-	let purchased = $state(false);
-
-	function handleBuy() {
-		purchased = true;
-		setTimeout(() => {
-			purchased = false;
-		}, 3000);
-	}
 </script>
 
 <article
@@ -47,7 +39,7 @@
 		>
 			<span class="font-medium text-primary-600 dark:text-primary-400">[Print Edition]</span>
 			{#if formattedDate}
-				<time datetime={issue.publish_date} class="font-mono text-[11px]">
+				<time datetime={issue.publish_date} class=" text-[11px]">
 					{formattedDate}
 				</time>
 			{/if}
@@ -70,26 +62,18 @@
 	<div class="mt-6 pt-4 border-t border-surface-200-800 space-y-3">
 		<div class="flex items-baseline justify-between">
 			<span class="text-xs uppercase tracking-wider opacity-60">Price</span>
-			<span class="font-mono text-xl font-bold tracking-tight">{formattedPrice}</span>
+			<span class=" text-xl font-bold tracking-tight">{formattedPrice}</span>
 		</div>
 
 		<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 			<!-- Buy Button -->
-			<button
-				type="button"
-				onclick={handleBuy}
-				class="btn w-full font-bold uppercase transition-all duration-200 {purchased
-					? 'preset-filled-success-500'
-					: 'preset-filled-primary-500 hover:brightness-110'}"
+			<a
+				href={resolve(`/issues/buy?issueId=${issue.id}`)}
+				class="btn w-full font-bold uppercase transition-all duration-200 preset-filled-primary-500 hover:brightness-110 flex items-center justify-center gap-1 text-xs"
 			>
-				{#if purchased}
-					<span class="icon-[boxicons--check] text-base"></span>
-					Added!
-				{:else}
-					<span class="icon-[boxicons--cart] text-base"></span>
-					Buy Issue
-				{/if}
-			</button>
+				<span class="icon-[boxicons--cart] text-base"></span>
+				<span>Buy Issue</span>
+			</a>
 
 			<!-- Digital PDF Link if available -->
 			{#if pdfUrl}
@@ -100,7 +84,7 @@
 					class="btn preset-outlined w-full font-bold uppercase hover:preset-filled transition-all duration-200 flex items-center justify-center gap-1 text-xs"
 					title="Read or Download Digital PDF"
 				>
-					<span class="icon-[boxicons--file-pdf] text-base"></span>
+					<span class="icon-[boxicons--file] text-base"></span>
 					PDF
 				</a>
 			{:else}
