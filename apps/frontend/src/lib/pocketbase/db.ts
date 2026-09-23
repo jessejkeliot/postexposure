@@ -1,7 +1,7 @@
 import { Temporal } from '@js-temporal/polyfill';
 import type PocketBase from 'pocketbase';
 import { pb as defaultClient } from './client';
-import type { About, Article, Author, Category, Film, Media, Screening, Season, Ticket } from '$lib/types/database';
+import type { About, Article, Author, Category, Film, Issue, Media, Screening, Season, Ticket } from '$lib/types/database';
 import { getWeekDateRange } from '$lib/funcs/dates';
 
 export interface PaginationOptions {
@@ -473,7 +473,11 @@ export function getFileUrl(
 	client: PocketBase = defaultClient
 ): string {
 	if (!filename) return '';
-	return client.files.getURL(record, filename, options);
+	const resolvedRecord = {
+		collectionName: record.collectionName || record.collectionId || 'media',
+		...record
+	};
+	return client.files.getURL(resolvedRecord, filename, options);
 }
 
 /**
@@ -519,4 +523,103 @@ export async function getRecentAbout(
 		sort: '-updated',
 	});
 	return res;
+}
+
+// -------------------------------------------------------------
+// Issues Helpers
+// -------------------------------------------------------------
+
+/**
+ * Fetch all magazine issues sorted by newest publish date.
+ */
+export async function getAllIssues(
+	client: PocketBase = defaultClient
+): Promise<Issue[]> {
+	return await client.collection('issues').getFullList<Issue>({
+		sort: '-publish_date',
+		expand: 'front_cover,back_cover,pdf'
+	});
+}
+
+/**
+ * Fetch the latest magazine issue.
+ */
+export async function getLatestIssue(
+	client: PocketBase = defaultClient
+): Promise<Issue | null> {
+	try {
+		return await client.collection('issues').getFirstListItem<Issue>('', {
+			sort: '-publish_date',
+			expand: 'front_cover,back_cover,pdf'
+		});
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Fetch a single magazine issue by ID.
+ */
+export async function getIssueById(
+	id: string,
+	client: PocketBase = defaultClient
+): Promise<Issue | null> {
+	try {
+		return await client.collection('issues').getOne<Issue>(id, {
+			expand: 'front_cover,back_cover,pdf'
+		});
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * Helper to get the cover image URL (front or back) for an issue.
+ */
+export function getIssueCoverUrl(
+	issue?: Issue | null,
+	side: 'front' | 'back' = 'front',
+	options: { thumb?: string } = {},
+	client: PocketBase = defaultClient
+): string | null {
+	if (!issue) return null;
+
+	const mediaRecord = side === 'back' ? issue.expand?.back_cover : issue.expand?.front_cover;
+	if (mediaRecord?.file) {
+		return getFileUrl(mediaRecord, mediaRecord.file, options, client);
+	}
+
+	const directField = side === 'back' ? issue.back_cover : issue.front_cover;
+	if (!directField) return null;
+	if (directField.startsWith('http://') || directField.startsWith('https://')) {
+		return directField;
+	}
+	return getFileUrl(issue, directField, options, client);
+}
+
+/**
+ * Helper to get the PDF document URL for an issue.
+ */
+export function getIssuePdfUrl(
+	issue?: Issue | null,
+	client: PocketBase = defaultClient
+): string | null {
+	if (!issue) return null;
+
+	if (issue.expand?.pdf?.file) {
+		return getFileUrl(issue.expand.pdf, issue.expand.pdf.file, {}, client);
+	}
+
+	if (issue.pdf_url) {
+		return issue.pdf_url;
+	}
+
+	if (issue.pdf) {
+		if (issue.pdf.startsWith('http://') || issue.pdf.startsWith('https://')) {
+			return issue.pdf;
+		}
+		return getFileUrl(issue, issue.pdf, {}, client);
+	}
+
+	return null;
 }

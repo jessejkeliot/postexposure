@@ -104,3 +104,22 @@ export interface About {
 	created: string;
 	updated: string;
 }
+
+export interface Issue {
+	id: string;
+	created: string;
+	updated: string;
+	title: string;
+	price: number;
+	publish_date: string;
+	description?: string;
+	front_cover?: string;
+	back_cover?: string;
+	pdf?: string;
+	pdf_url?: string;
+	expand?: {
+		front_cover?: Media;
+		back_cover?: Media;
+		pdf?: Media;
+	};
+}

@@ -196,6 +196,85 @@ async function populateFilmsAndScreenings(mediaList, seasons, count = 8) {
   return films;
 }
 
+async function populateIssues(mediaList, count = 6) {
+  console.log(`Seeding ${count} magazine issues...`);
+  const issueThemes = [
+    {
+      title: 'Issue #06: Neon Noir & The Contemporary Midnight Reel',
+      description: 'An exploration of modern neo-noir, shadow puppetry in digital cinematography, and exclusive interviews with indie cinematographers shaping modern nightscapes.',
+      price: 15.00
+    },
+    {
+      title: 'Issue #05: Analog Dreams — The Celluloid Renaissance',
+      description: 'Why 35mm and 16mm film stock are experiencing a cultural resurgence. Featuring archival essays, darkroom deep dives, and director roundtable discussions.',
+      price: 14.00
+    },
+    {
+      title: 'Issue #04: The Architecture of Cinematic Suspense',
+      description: 'Dissecting pacing, blocking, and spatial geometry in thriller masterpieces from Hitchcock to contemporary psychological cinema.',
+      price: 12.50
+    },
+    {
+      title: 'Issue #03: Voices From The Underground (1975–1989)',
+      description: 'A retrospective on underground collective filmmaking, DIY distribution networks, and rare poster archives.',
+      price: 12.00
+    },
+    {
+      title: 'Issue #02: Sonic Landscapes: Sound Design as Narrative',
+      description: 'From concrete music to granular synthesis — how pioneering audio engineers sculpt cinematic tension and emotional resonance.',
+      price: 10.50
+    },
+    {
+      title: 'Issue #01: Inaugural Edition — The Future of the Moving Image',
+      description: 'The debut issue of Post Exposure. Essays on cinema exhibition, film preservation, and radical emerging visions.',
+      price: 10.00
+    }
+  ];
+
+  const issues = [];
+  const now = new Date();
+
+  for (let i = 0; i < Math.min(count, issueThemes.length); i++) {
+    const theme = issueThemes[i];
+    // Dates spaced out backwards (latest is recent)
+    const pubDate = new Date(now.getTime() - i * 60 * 24 * 60 * 60 * 1000);
+
+    const frontMedia = mediaList && mediaList.length > 0 ? mediaList[(i * 2) % mediaList.length] : null;
+    const backMedia = mediaList && mediaList.length > 0 ? mediaList[(i * 2 + 1) % mediaList.length] : null;
+
+    // Create a mock PDF media record for the issue
+    let pdfMedia = null;
+    try {
+      const mockPdfContent = `%PDF-1.4\n%âãÏÓ\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<<>>>>endobj\nxref\n0 4\n0000000000 65535 f \n0000000015 00000 n \n0000000060 00000 n \n0000000111 00000 n \ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n190\n%%EOF`;
+      const pdfBlob = new Blob([mockPdfContent], { type: 'application/pdf' });
+      const pdfFormData = new FormData();
+      pdfFormData.append('file', pdfBlob, `post_exposure_issue_0${6 - i}.pdf`);
+      pdfFormData.append('caption', `Digital Edition PDF - ${theme.title}`);
+      pdfFormData.append('type', 'pdf');
+      pdfMedia = await pb.collection('media').create(pdfFormData);
+    } catch (err) {
+      console.warn(`Could not seed PDF media for issue ${i + 1}:`, err.message);
+    }
+
+    try {
+      const issue = await pb.collection('issues').create({
+        title: theme.title,
+        price: theme.price,
+        description: theme.description,
+        publish_date: pubDate.toISOString(),
+        front_cover: frontMedia ? frontMedia.id : null,
+        back_cover: backMedia ? backMedia.id : null,
+        pdf: pdfMedia ? pdfMedia.id : null
+      });
+      issues.push(issue);
+    } catch (err) {
+      console.error(`Failed to create issue "${theme.title}":`, err.message);
+    }
+  }
+
+  return issues;
+}
+
 async function main() {
   console.log(`Connecting to PocketBase at ${pbUrl}...`);
   await authenticate();
@@ -207,6 +286,7 @@ async function main() {
   await populateArticles(categories, authors, media, 15);
   const seasons = await populateSeasons(3);
   await populateFilmsAndScreenings(media, seasons, 18);
+  await populateIssues(media, 6);
 
   console.log('Database population completed successfully!');
 }

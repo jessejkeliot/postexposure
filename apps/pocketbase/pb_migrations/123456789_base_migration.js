@@ -45,11 +45,11 @@ migrate((app) => {
                 type: "file", 
                 required: true, 
                 maxSelect: 1, 
-                maxSize: 10485760, // 10MB limit
-                mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"] 
+                maxSize: 52428800, // 50MB limit
+                mimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"] 
             },
             { name: "caption", type: "text" },
-            { name: "type", type: "select", maxSelect: 1, values: ["poster", "still", "banner", "thumbnail"] },
+            { name: "type", type: "select", maxSelect: 1, values: ["poster", "still", "banner", "thumbnail", "pdf", "cover"] },
             { name: "created", type: "autodate", onCreate: true },
             { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
         ]
@@ -225,10 +225,52 @@ migrate((app) => {
     });
     app.save(about);
 
+    // 10. Issues Collection (Magazine Issues)
+    const issues = new Collection({
+        type: "base",
+        name: "issues",
+        listRule: "",
+        viewRule: "",
+        createRule: null,
+        updateRule: null,
+        deleteRule: null,
+        fields: [
+            { name: "title", type: "text", required: true },
+            { name: "price", type: "number", required: true, min: 0 },
+            { 
+                name: "front_cover", 
+                type: "relation", 
+                maxSelect: 1, 
+                collectionId: media.id, 
+                cascadeDelete: false 
+            },
+            { 
+                name: "back_cover", 
+                type: "relation", 
+                maxSelect: 1, 
+                collectionId: media.id, 
+                cascadeDelete: false 
+            },
+            { 
+                name: "pdf", 
+                type: "relation", 
+                maxSelect: 1, 
+                collectionId: media.id, 
+                cascadeDelete: false 
+            },
+            { name: "pdf_url", type: "text" },
+            { name: "publish_date", type: "date", required: true },
+            { name: "description", type: "text" },
+            { name: "created", type: "autodate", onCreate: true },
+            { name: "updated", type: "autodate", onCreate: true, onUpdate: true }
+        ]
+    });
+    app.save(issues);
 
 }, (app) => {
     // Down migration (rollback behavior if needed)
     try {
+        app.delete(app.findCollectionByNameOrId("issues"));
         app.delete(app.findCollectionByNameOrId("tickets"));
         app.delete(app.findCollectionByNameOrId("articles"));
         app.delete(app.findCollectionByNameOrId("authors"));
