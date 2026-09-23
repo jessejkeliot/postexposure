@@ -12,10 +12,24 @@
 	}
 
 	const user = $derived(page.data.user);
+	function checkIfMouseStillOver(){
+		if(mouseOver === false){
+			showing=false;
+		}
+	}
+	let mouseOver = $state(false);
 </script>
 
 <div class="flex min-h-screen w-full flex-col">
-	<header class="sticky top-0 z-50 w-full">
+	<header
+		class="sticky top-0 z-50 w-full"
+		onmouseleave={() => {
+			mouseOver = false;
+			setTimeout(checkIfMouseStillOver, 350)
+		}}
+		onmouseenter={() => {showing = true; mouseOver=true;}}
+		role="directory"
+	>
 		<nav
 			class="navbar relative z-30 flex w-full flex-row items-center justify-between border-b bg-surface-50 px-4 py-1.5 dark:bg-surface-950"
 		>
