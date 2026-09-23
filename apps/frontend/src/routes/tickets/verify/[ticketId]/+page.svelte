@@ -19,7 +19,7 @@
 		screening?.showing_date ? formatScreeningDate(screening.showing_date) : 'TBD'
 	);
 	const formattedTime = $derived(
-		screening?.showing_time ? formatScreeningTime(screening.showing_time) : 'TBD'
+		screening?.showing_date ? formatScreeningTime(screening.showing_date) : 'TBD'
 	);
 </script>
 

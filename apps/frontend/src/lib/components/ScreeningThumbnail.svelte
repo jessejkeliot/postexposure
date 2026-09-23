@@ -53,11 +53,11 @@
 
 	const formattedTime = $derived.by(() => {
 		try {
-			const instant = Temporal.Instant.from(screening.showing_time);
+			const instant = Temporal.Instant.from(screening.showing_date);
 			const zdt = instant.toZonedDateTimeISO(tz);
 			return zdt.toPlainTime().toString({ smallestUnit: 'minute' });
 		} catch {
-			return new Date(screening.showing_time).toLocaleTimeString([], {
+			return new Date(screening.showing_date).toLocaleTimeString([], {
 				hour: '2-digit',
 				minute: '2-digit'
 			});

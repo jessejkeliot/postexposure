@@ -12,7 +12,7 @@
 		screening.showing_date ? formatScreeningDate(screening.showing_date) : null
 	);
 	const formattedScreeningTime = $derived(
-		screening.showing_time ? formatScreeningTime(screening.showing_time) : null
+		screening.showing_date ? formatScreeningTime(screening.showing_date) : null
 	);
 </script>
 

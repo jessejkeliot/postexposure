@@ -75,7 +75,6 @@ export interface Screening {
 	film: string;
 	season: string;
 	showing_date: string;
-	showing_time: string;
 	price?: number;
 	total_tickets?: number;
 	tickets_sold?: number;

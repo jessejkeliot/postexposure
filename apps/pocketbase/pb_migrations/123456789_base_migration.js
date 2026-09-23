@@ -164,7 +164,6 @@ migrate((app) => {
                 cascadeDelete: false 
             },
             { name: "showing_date", type: "date", required: true },
-            { name: "showing_time", type: "date", required: true },
             { name: "price", type: "number", min: 0 },
             { name: "total_tickets", type: "number", min: 0 },
             { name: "tickets_sold", type: "number", min: 0 },

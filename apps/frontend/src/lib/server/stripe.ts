@@ -62,7 +62,8 @@ export async function createTicketCheckoutSession(params: CreateTicketCheckoutPa
 	const unitAmountPence = Math.round(unitPrice * 100);
 	const description = `${showingDate} at ${showingTime}${isMemberDiscount ? ' (20% Member Discount)' : ''}`;
 
-	if (stripe && isRealStripeKey) {
+	// If the ticket price is £0 (free ticket or 100% discount), skip Stripe and proceed directly to success page
+	if (unitAmountPence > 0 && stripe && isRealStripeKey) {
 		try {
 			const session = await stripe.checkout.sessions.create({
 				payment_method_types: ['card'],
@@ -327,7 +328,8 @@ export async function createIssueCheckoutSession(params: CreateIssueCheckoutPara
 	const unitAmountPence = Math.round(unitPrice * 100);
 	const description = `Digital PDF & Print Magazine Edition${isMemberDiscount ? ' (20% Member Discount)' : ''}`;
 
-	if (stripe && isRealStripeKey) {
+	// If the issue price is £0 (free issue or 100% discount), skip Stripe and proceed directly to success page
+	if (unitAmountPence > 0 && stripe && isRealStripeKey) {
 		try {
 			const session = await stripe.checkout.sessions.create({
 				payment_method_types: ['card'],

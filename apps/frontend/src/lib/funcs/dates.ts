@@ -151,13 +151,13 @@ export function formatScreeningDate(showingDate: string) {
 	}
 }
 
-export function formatScreeningTime(showingTime: string) {
+export function formatScreeningTime(showingDate: string) {
 	try {
 		return new Intl.DateTimeFormat('en-UK', {
 			hour: 'numeric',
 			minute: 'numeric'
-		}).format(new Date(showingTime));
+		}).format(new Date(showingDate));
 	} catch {
-		return showingTime;
+		return showingDate;
 	}
 }

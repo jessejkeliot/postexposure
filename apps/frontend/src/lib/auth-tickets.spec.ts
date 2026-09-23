@@ -385,4 +385,44 @@ describe('Stripe Ticket Purchasing Integration', () => {
 		deleteStep = 0;
 		expect(deleteStep).toBe(0);
 	});
+
+	it('skips Stripe and redirects straight to success page for £0 tickets', () => {
+		function getCheckoutDestination(unitPrice: number, screeningId: string, filmId: string, quantity: number, origin: string) {
+			const unitAmountPence = Math.round(unitPrice * 100);
+			const isRealStripe = true; // even when real Stripe credentials are present
+
+			if (unitAmountPence <= 0 || !isRealStripe) {
+				const sessionId = 'cs_free_' + 'abc12345';
+				const query = new URLSearchParams({
+					session_id: sessionId,
+					screening_id: screeningId,
+					film_id: filmId,
+					quantity: String(quantity),
+					unit_price: String(unitPrice),
+					simulated: 'true'
+				});
+				return {
+					url: `${origin}/tickets/success?${query.toString()}`,
+					bypassedStripe: true
+				};
+			}
+
+			return {
+				url: 'https://checkout.stripe.com/c/pay/cs_live_123',
+				bypassedStripe: false
+			};
+		}
+
+		// £0 screening (free admission)
+		const freeCheckout = getCheckoutDestination(0, 'scr-free-1', 'film-1', 2, 'http://localhost:5173');
+		expect(freeCheckout.bypassedStripe).toBe(true);
+		expect(freeCheckout.url).toContain('/tickets/success?');
+		expect(freeCheckout.url).toContain('session_id=cs_free_');
+		expect(freeCheckout.url).toContain('unit_price=0');
+
+		// Standard paid screening (£12)
+		const paidCheckout = getCheckoutDestination(12.0, 'scr-paid-1', 'film-1', 2, 'http://localhost:5173');
+		expect(paidCheckout.bypassedStripe).toBe(false);
+		expect(paidCheckout.url).toContain('checkout.stripe.com');
+	});
 });

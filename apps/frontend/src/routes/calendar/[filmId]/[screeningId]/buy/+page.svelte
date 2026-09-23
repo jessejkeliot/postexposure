@@ -14,7 +14,7 @@
 
 	const remainingTickets = $derived(getRemainingTickets(data.screening));
 	const isSoldOut = $derived(isScreeningSoldOut(data.screening) || remainingTickets <= 0);
-	const maxSelectable = $derived(Math.max(1, Math.min(6, remainingTickets)));
+	const maxSelectable = $derived(Math.max(1, Math.min(4, remainingTickets)));
 	const allowedQuantities = $derived(
 		Array.from({ length: maxSelectable }, (_, i) => i + 1)
 	);
@@ -99,9 +99,6 @@
 									>
 								{/each}
 							</select>
-							<span class="text-xs opacity-70">
-								(Max {maxSelectable} {maxSelectable === 1 ? 'ticket' : 'tickets'} per reservation)
-							</span>
 						</div>
 					</div>
 

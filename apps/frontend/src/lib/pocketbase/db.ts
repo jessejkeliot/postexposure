@@ -291,7 +291,7 @@ export async function getScreeningsByDateRange(
 
 	return await client.collection('screenings').getFullList<Screening>({
 		filter: `showing_date >= "${startIso}" && showing_date <= "${endIso}"`,
-		sort: 'showing_date,showing_time',
+		sort: 'showing_date',
 		expand: 'film,film.cover_image'
 	});
 }
@@ -301,7 +301,7 @@ export async function getScreeningsBySeason(
 ): Promise<Screening[]> {
 	return await client.collection('screenings').getFullList<Screening>({
 		filter: `season="${screening.season}"`,
-		sort: 'showing_date,showing_time',
+		sort: 'showing_date',
 		expand: 'film,film.cover_image'
 	});
 }
@@ -312,7 +312,7 @@ export async function getScreeningsByDirector(
 ): Promise<Screening[]> {
 	return await client.collection('screenings').getList<Screening>(1, limit, {
 		filter: `film.director =="${director}"`,
-		sort: 'showing_date,showing_time',
+		sort: 'showing_date',
 		expand: 'film'
 	}).then((res)=> res.items);
 }
@@ -356,7 +356,7 @@ export async function getUpcomingScreenings(
 	const iso = toTemporalIsoString(from);
 	return await client.collection('screenings').getList<Screening>(1, limit, {
 		filter: `showing_date >= "${iso}"`,
-		sort: 'showing_date,showing_time',
+		sort: 'showing_date',
 		expand: 'film,film.cover_image'
 	}).then((res) => res.items);
 }
@@ -371,7 +371,7 @@ export async function getAllUpcomingScreenings(
 	const iso = toTemporalIsoString(from);
 	return await client.collection('screenings').getFullList<Screening>({
 		filter: `showing_date >= "${iso}"`,
-		sort: 'showing_date,showing_time',
+		sort: 'showing_date',
 		expand: 'film,film.cover_image'
 	});
 }

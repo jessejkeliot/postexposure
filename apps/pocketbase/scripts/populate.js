@@ -188,7 +188,6 @@ async function populateFilmsAndScreenings(mediaList, seasons, count = 8) {
         film: film.id,
         season: season.id,
         showing_date: showDate.toISOString(),
-        showing_time: showDate.toISOString(),
         price: price,
         total_tickets: totalTickets,
         tickets_sold: ticketsSold,

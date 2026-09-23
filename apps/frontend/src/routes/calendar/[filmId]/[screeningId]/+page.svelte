@@ -37,7 +37,7 @@
 			<img
 				src={coverUrl}
 				alt={data.film.title}
-				class="h-full w-full object-cover transition delay-0 duration-220 lg:brightness-95 lg:group-hover:brightness-106 lg:group-hover:saturate-120"
+				class="h-full w-full object-cover transition delay-0 duration-220 lg:brightness-100 lg:group-hover:brightness-106 lg:group-hover:saturate-120"
 				fetchpriority="high"
 				data-sveltekit-preload-code="viewport"
 			/>

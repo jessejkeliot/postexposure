@@ -61,7 +61,7 @@ export const actions: Actions = {
 			filmId: film.id,
 			filmTitle: film.title,
 			showingDate: screening.showing_date ? formatScreeningDate(screening.showing_date) : '',
-			showingTime: screening.showing_time ? formatScreeningTime(screening.showing_time) : '',
+			showingTime: screening.showing_date ? formatScreeningTime(screening.showing_date) : '',
 			unitPrice,
 			quantity,
 			userId,

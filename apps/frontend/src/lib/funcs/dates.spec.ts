@@ -65,7 +65,6 @@ describe('Ticket Management Logic', () => {
 			film: 'film-1',
 			season: 'season-1',
 			showing_date: '2026-09-10T19:00:00Z',
-			showing_time: '2026-09-10T19:00:00Z',
 			total_tickets: 50,
 			tickets_sold: 20
 		};
@@ -82,7 +81,6 @@ describe('Ticket Management Logic', () => {
 			film: 'film-1',
 			season: 'season-1',
 			showing_date: '2026-09-10T19:00:00Z',
-			showing_time: '2026-09-10T19:00:00Z',
 			total_tickets: 50,
 			tickets_sold: 50
 		};
@@ -99,7 +97,6 @@ describe('Ticket Management Logic', () => {
 			film: 'film-1',
 			season: 'season-1',
 			showing_date: '2026-09-10T19:00:00Z',
-			showing_time: '2026-09-10T19:00:00Z',
 			total_tickets: 100,
 			tickets_sold: 95,
 			tickets_available: 5
