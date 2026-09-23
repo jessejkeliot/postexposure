@@ -147,13 +147,6 @@
 						<span>Pay with Stripe (£{totalPrice})</span>
 					{/if}
 				</button>
-
-				<div
-					class="flex items-center justify-center gap-2 text-[11px] tracking-wider uppercase opacity-60"
-				>
-					<span class="icon-[boxicons--lock]"></span>
-					<span>Secured by Stripe Payments & SSL Encryption</span>
-				</div>
 			</form>
 		{/if}
 	</div>
