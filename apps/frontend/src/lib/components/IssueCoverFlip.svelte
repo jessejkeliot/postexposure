@@ -42,13 +42,13 @@
 >
 	<!-- 3D Card Flipper Container -->
 	<div
-		class="magazine-card relative aspect-3/4 w-full shadow-2xl rounded-sm overflow-hidden transition-transform duration-700 ease-out {isFlipped
+		class="magazine-card relative aspect-3/4 w-full shadow-2xl rounded-sm transition-transform duration-700 ease-out {isFlipped
 			? 'is-flipped'
 			: ''}"
 	>
 		<!-- Front Cover -->
 		<div
-			class="magazine-face magazine-front absolute inset-0 overflow-hidden bg-surface-900 text-surface-50"
+			class="magazine-face magazine-front absolute inset-0 overflow-hidden rounded-sm bg-surface-900 text-surface-50"
 		>
 			{#if frontCoverUrl}
 				<img
@@ -73,15 +73,15 @@
 
 		<!-- Back Cover (Flipped 180deg) -->
 		<div
-			class="magazine-face magazine-back absolute inset-0 overflow-hidden bg-surface-950 text-surface-50"
+			class="magazine-face magazine-back absolute inset-0 overflow-hidden rounded-sm bg-surface-950 text-surface-50"
 		>
 			{#if backCoverUrl}
-					<img
-						src={backCoverUrl}
-						alt={`${issue.title} back cover`}
-						class="h-full w-full object-cover transition duration-300 group-hover:scale-102"
-						loading="lazy"
-					/>
+				<img
+					src={backCoverUrl}
+					alt={`${issue.title} back cover`}
+					class="h-full w-full object-cover transition duration-300 group-hover:scale-102"
+					loading="eager"
+				/>
 			{:else}
 				<div
 					class="flex h-full w-full flex-col justify-between bg-surface-950 p-6 text-surface-100"
@@ -140,6 +140,7 @@
 	/* Flip on hover for mouse devices */
 	@media (hover: hover) {
 		.group:hover .magazine-card {
+			transition-delay: 120ms;
 			transform: rotateY(180deg);
 		}
 	}
