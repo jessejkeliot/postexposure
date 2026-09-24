@@ -200,39 +200,14 @@ async function populateFilmsAndScreenings(mediaList, seasons, count = 8) {
 
 async function populateIssues(mediaList, count = 6) {
   console.log(`Seeding ${count} magazine issues...`);
-  const issueThemes = [
-    {
-      title: 'Issue #06: Neon Noir & The Contemporary Midnight Reel',
-      description: 'An exploration of modern neo-noir, shadow puppetry in digital cinematography, and exclusive interviews with indie cinematographers shaping modern nightscapes.',
-      price: 15.00
-    },
-    {
-      title: 'Issue #05: Analog Dreams — The Celluloid Renaissance',
-      description: 'Why 35mm and 16mm film stock are experiencing a cultural resurgence. Featuring archival essays, darkroom deep dives, and director roundtable discussions.',
-      price: 14.00
-    },
-    {
-      title: 'Issue #04: The Architecture of Cinematic Suspense',
-      description: 'Dissecting pacing, blocking, and spatial geometry in thriller masterpieces from Hitchcock to contemporary psychological cinema.',
-      price: 12.50
-    },
-    {
-      title: 'Issue #03: Voices From The Underground (1975–1989)',
-      description: 'A retrospective on underground collective filmmaking, DIY distribution networks, and rare poster archives.',
-      price: 12.00
-    },
-    {
-      title: 'Issue #02: Sonic Landscapes: Sound Design as Narrative',
-      description: 'From concrete music to granular synthesis — how pioneering audio engineers sculpt cinematic tension and emotional resonance.',
-      price: 10.50
-    },
-    {
-      title: 'Issue #01: Inaugural Edition — The Future of the Moving Image',
-      description: 'The debut issue of Post Exposure. Essays on cinema exhibition, film preservation, and radical emerging visions.',
-      price: 10.00
-    }
-  ];
-
+  const issueThemes = [];
+  for(let i=0; i<count;i++){
+    issueThemes.push({
+      title: `Issue #${(count - i)}: ${faker.book.title()}`,
+      description: faker.lorem.sentences(Math.random() < 0.2 ? 2 : 1),
+      price: Math.floor(faker.number.float({min: 10, max: 25})),
+    })
+  }
   const issues = [];
   const now = new Date();
 
