@@ -393,14 +393,14 @@ async function main() {
   console.log(`Connecting to PocketBase at ${pbUrl}...`);
   await authenticate();
   console.log('Authenticated successfully.');
-  const media = await populateMedia(40);
+  const media = await populateMedia(60);
   const about = await populateAbout();
   const categories = await populateCategories();
   const authors = await populateAuthors(6);
   await populateArticles(categories, authors, media, 15);
   const seasons = await populateSeasons(3);
-  await populateFilmsAndScreenings(media, seasons, 18);
-  await populateIssues(media, 6);
+  await populateFilmsAndScreenings(media, seasons, 10);
+  await populateIssues(media, 3);
   await populateUsersAndTickets();
 
   console.log('Database population completed successfully!');
