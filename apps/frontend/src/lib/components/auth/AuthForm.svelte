@@ -35,20 +35,6 @@
 				class="w-full border bg-surface-50 px-3 py-2 text-sm outline-none focus:border-surface-950 dark:border-surface-700 dark:bg-surface-900 dark:focus:border-surface-100"
 			/>
 		</div>
-
-		<div>
-			<label for="role" class="mb-1 block text-xs font-bold tracking-wider uppercase">
-				Account Role
-			</label>
-			<select
-				id="role"
-				bind:value={role}
-				class="w-full border bg-surface-50 px-3 py-2 text-sm outline-none focus:border-surface-950 dark:border-surface-700 dark:bg-surface-900 dark:focus:border-surface-100"
-			>
-				<option value="user">Film Enthusiast / Reader</option>
-				<option value="admin">Curator / Venue Administrator</option>
-			</select>
-		</div>
 	{/if}
 
 	<div>

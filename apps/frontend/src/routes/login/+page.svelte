@@ -4,7 +4,6 @@
 	import type { PageProps } from './$types';
 	import AuthModeTabs from '$lib/components/auth/AuthModeTabs.svelte';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
-	import DemoProfilesBar from '$lib/components/auth/DemoProfilesBar.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -12,7 +11,6 @@
 	let email = $state('');
 	let password = $state('');
 	let name = $state('');
-	let role = $state<'user' | 'admin'>('user');
 	let error = $state<string | null>(null);
 	let loading = $state(false);
 
@@ -44,8 +42,6 @@
 					email,
 					password,
 					name,
-					// @ts-expect-error extra fields
-					role
 				});
 
 				if (res.error) {
@@ -63,28 +59,6 @@
 		}
 	}
 
-	async function loginAs(demoEmail: string, demoPass: string) {
-		email = demoEmail;
-		password = demoPass;
-		error = null;
-		loading = true;
-		try {
-			const res = await signIn.email({
-				email: demoEmail,
-				password: demoPass
-			});
-			if (res.error) {
-				error = res.error.message || 'Demo sign-in failed.';
-				loading = false;
-				return;
-			}
-			await invalidateAll();
-			goto(data.redirectTo || '/account');
-		} catch (err) {
-			error = err instanceof Error ? err.message : 'Demo sign-in failed.';
-			loading = false;
-		}
-	}
 </script>
 
 <svelte:head>
@@ -132,10 +106,6 @@
 		bind:email
 		bind:password
 		bind:name
-		bind:role
 		onSubmit={handleSubmit}
 	/>
-
-	<!-- Demo Quick Logins -->
-	<DemoProfilesBar onSelectProfile={loginAs} />
 </div>
