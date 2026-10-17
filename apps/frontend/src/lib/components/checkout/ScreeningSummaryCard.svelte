@@ -3,7 +3,7 @@
 	import type { Film, Screening } from '$lib/types/database';
 	import GrainOverlay from '$lib/components/image-effects/GrainOverlay.svelte';
 	import { formatScreeningDate, formatScreeningTime } from '$lib/funcs/dates';
-
+	const SHOW_REMAINING_TICKETS = true;
 	interface Props {
 		film: Film;
 		screening: Screening;
@@ -69,7 +69,9 @@
 					Only {remainingTickets}
 					{remainingTickets === 1 ? 'ticket' : 'tickets'} left
 				{:else}
-					{remainingTickets} tickets left
+					{#if SHOW_REMAINING_TICKETS}
+							{remainingTickets} tickets left
+					{/if}
 				{/if}
 			</span>
 		</div>

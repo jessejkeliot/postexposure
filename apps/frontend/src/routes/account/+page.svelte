@@ -27,7 +27,7 @@
 					</span>
 				</div>
 			{/if}
-			<h1 class="text-3xl font-bold tracking-tight uppercase sm:text-5xl">Account Overview</h1>
+			<h1 class="text-xl font-bold tracking-tight uppercase sm:text-2xl">Account Overview</h1>
 			<p class="mt-1 text-xs text-surface-600 sm:text-sm dark:text-surface-400">
 				Manage your membership profile, credentials, and transaction history.
 			</p>

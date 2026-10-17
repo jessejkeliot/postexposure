@@ -5,6 +5,10 @@ import adapter from '@sveltejs/adapter-auto';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
+	server: {
+		host: '0.0.0.0', // Exposes server to all local network interfaces
+		port: 5173
+	},
 	plugins: [
 		tailwindcss(),
 		sveltekit({

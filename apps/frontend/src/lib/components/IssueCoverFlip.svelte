@@ -7,9 +7,10 @@
 		issue: Issue;
 		variant?: 'hero' | 'standard' | 'compact';
 		showFlipHint?: boolean;
+		disableFlipping? : boolean;
 	}
 
-	let { issue, variant = 'standard', showFlipHint = false }: Props = $props();
+	let { issue, variant = 'standard', showFlipHint = false, disableFlipping = false}: Props = $props();
 
 	let isFlipped = $state(false);
 
@@ -42,7 +43,7 @@
 >
 	<!-- 3D Card Flipper Container -->
 	<div
-		class="magazine-card relative aspect-3/4 w-full shadow-2xl rounded-sm transition-transform duration-700 ease-out {isFlipped
+		class="relative aspect-3/4 w-full shadow-2xl rounded-sm  duration-700 ease-out {!disableFlipping && isFlipped
 			? 'is-flipped'
 			: ''}"
 	>
@@ -64,11 +65,6 @@
 					<span class="mt-1 text-xs opacity-60">Front Cover</span>
 				</div>
 			{/if}
-
-			<!-- Subtle Spine Light Reflection -->
-			<div
-				class="pointer-events-none absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-black/40 via-white/10 to-transparent"
-			></div>
 		</div>
 
 		<!-- Back Cover (Flipped 180deg) -->
@@ -110,11 +106,6 @@
 					</div>
 				</div>
 			{/if}
-
-			<!-- Subtle Spine Light Reflection (Mirrored for Back) -->
-			<div
-				class="pointer-events-none absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-black/40 via-white/10 to-transparent"
-			></div>
 		</div>
 	</div>
 

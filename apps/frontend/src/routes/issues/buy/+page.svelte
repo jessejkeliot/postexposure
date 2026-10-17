@@ -69,32 +69,12 @@
 			<div class="md:col-span-2 space-y-4 text-sm">
 				{#if issue.description}
 					<div class="border border-surface-950 dark:border-surface-50 p-4">
-						<div class="text-xs uppercase opacity-60 mb-1">Editorial Synopsis</div>
+						<div class="text-xs uppercase opacity-60 mb-1">Editor's Note</div>
 						<p class="text-xs leading-relaxed opacity-85">
 							{issue.description}
 						</p>
 					</div>
 				{/if}
-
-				<div class="border border-surface-950 dark:border-surface-50 p-4">
-					<div class="text-xs uppercase opacity-60 mb-1">Pricing & Benefits</div>
-					{#if isSubscribed}
-						<div class="flex items-center gap-2 text-emerald-500 font-bold">
-							<span class="icon-[boxicons--check-shield] btn-icon-base"></span>
-							<span>20% Member Discount Applied (£{formattedTotal})</span>
-						</div>
-					{:else}
-						<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-							<span>Standard Rate: £{basePrice.toFixed(2)}</span>
-							<a
-								href={resolve('/subscribe')}
-								class="text-xs font-bold text-primary-500 uppercase underline hover:opacity-80"
-							>
-								Subscribe for 20% off
-							</a>
-						</div>
-					{/if}
-				</div>
 			</div>
 		</div>
 

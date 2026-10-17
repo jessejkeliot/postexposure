@@ -43,7 +43,7 @@
 		<!-- Latest Issue Feature Section -->
 		<section
 			aria-labelledby="latest-issue-heading"
-			class="rounded-none border-2 border-surface-200-800 bg-surface-100-900/40 p-6 sm:p-8 lg:p-10"
+			class="rounded-none border border-surface-100-900 p-6 sm:p-8 lg:p-10"
 		>
 			<div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12 items-center">
 				<!-- Left: 3D Flip Magazine Cover -->
@@ -87,14 +87,14 @@
 							</span>
 						</div>
 
-						<div class="flex flex-col sm:flex-row gap-3">
+						<div class="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
 							<!-- Purchase Button -->
 							<a
 								href={resolve(`/issues/buy?issueId=${latestIssue.id}`)}
-								class="btn btn-lg font-bold uppercase tracking-wider flex-1 transition-all duration-200 preset-filled-brand sm:preset-outlined text-wrap hover:brightness-105 flex items-center justify-center gap-2"
+								class="btn btn-lg font-bold uppercase tracking-wider w-1/4 min-w-xs transition-all duration-200 preset-filled sm:preset-outlined text-wrap hover:brightness-105 flex items-center justify-center gap-2"
 							>
 								<span class="icon-[boxicons--cart] text-xl"></span>
-								<span>Purchase PDF Edition</span>
+								<span>Purchase PDF</span>
 							</a>
 						</div>
 					</div>

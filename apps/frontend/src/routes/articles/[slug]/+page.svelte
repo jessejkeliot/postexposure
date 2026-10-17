@@ -29,8 +29,8 @@
 
 <div class="mx-auto max-w-4xl py-6 sm:py-10">
 	<!-- Article Header -->
-	<header class="mb-8 border-b border-surface-200-800 pb-8">
-		<div class="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider uppercase opacity-75">
+	<header class="mb-4 border-b border-surface-200-800 pb-4">
+		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider uppercase opacity-75">
 			{#if categoryName}
 				<span class="font-medium text-primary-500">[{categoryName}]</span>
 			{/if}
@@ -50,15 +50,25 @@
 		<h1 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
 			{data.article.title}
 		</h1>
-
+		
 		{#if data.article.excerpt}
-			<p class="mt-4 text-lg font-light leading-relaxed opacity-80 sm:text-xl">
-				{data.article.excerpt}
-			</p>
+		<p class="my-2 text-lg font-light leading-relaxed opacity-80 sm:text-xl">
+			{data.article.excerpt}
+		</p>
 		{/if}
-
+		<!-- Cover Image -->
+		{#if data.coverUrl}
+			<figure class="my-4 overflow-hidden bg-surface-100-900">
+				<img
+					src={data.coverUrl}
+					alt={data.article.title}
+					class="h-auto w-full object-cover max-h-[500px]"
+				/>
+			</figure>
+		{/if}
+		
 		{#if authorName}
-			<div class="mt-6 flex items-center gap-3">
+			<div class="flex items-center gap-3">
 				<div>
 					<p class="text-sm font-medium">By {authorName}</p>
 					{#if authorBio}
@@ -69,16 +79,6 @@
 		{/if}
 	</header>
 
-	<!-- Cover Image -->
-	{#if data.coverUrl}
-		<figure class="mb-10 overflow-hidden bg-surface-100-900">
-			<img
-				src={data.coverUrl}
-				alt={data.article.title}
-				class="h-auto w-full object-cover max-h-[500px]"
-			/>
-		</figure>
-	{/if}
 
 	<!-- Article Body -->
 	<div class="prose prose-neutral dark:prose-invert max-w-none prose-lg leading-relaxed">

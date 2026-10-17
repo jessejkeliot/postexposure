@@ -4,6 +4,7 @@
 	import { Temporal } from '@js-temporal/polyfill';
 	import { resolve } from '$app/paths';
 	import GrainOverlay from './image-effects/GrainOverlay.svelte';
+	const SHOW_REMAINING_TICKETS = true;
 
 	interface Props {
 		screening: Screening;
@@ -74,7 +75,8 @@
 		? 'md:grid md:grid-cols-2 md:gap-8 md:border-b-2'
 		: ''}"
 >
-	<a class="flex h-full min-w-2xs flex-col justify-between"
+	<a
+		class="flex h-full min-w-2xs flex-col justify-between"
 		href={resolve(`/calendar/${film?.id}/${screening.id}`)}
 	>
 		<div>
@@ -83,7 +85,7 @@
 				class="group relative mb-4 block aspect-16/10 min-w-2xs overflow-hidden bg-linear-to-br from-surface-100-900 via-surface-300-700 to-surface-100-900 transition duration-200"
 			>
 				{#if coverUrl}
-					<GrainOverlay intensity='medium'>
+					<GrainOverlay intensity="medium">
 						<img
 							src={coverUrl}
 							alt={coverCaption}
@@ -106,11 +108,13 @@
 						Sold Out
 					</div>
 				{:else if screening.total_tickets}
-					<div
-						class="absolute top-2 right-2 bg-surface-950/80 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-surface-50 backdrop-blur-xs dark:bg-surface-50/80 dark:text-surface-950"
-					>
-						{remainingTickets} tickets left
-					</div>
+					{#if SHOW_REMAINING_TICKETS}
+						<div
+							class="absolute top-2 right-2 bg-surface-950/80 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-surface-50 backdrop-blur-xs dark:bg-surface-50/80 dark:text-surface-950"
+						>
+							{remainingTickets} tickets left
+						</div>
+					{/if}
 				{/if}
 			</div>
 

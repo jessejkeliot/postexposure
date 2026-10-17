@@ -61,7 +61,7 @@
 					href={resolve(item.path as any)}
 					id={i.toString()}
 					onclick={() => (showing = false)}
-					class="flex flex-1 items-center justify-center py-4 md:py-0  text-xl tracking-wider text-typo-base-dark uppercase md:text-sm dark:text-typo-base-light hover:opacity-70 transition-opacity"
+					class="flex flex-1 items-center justify-center py-4 md:py-0  text-xl tracking-wider text-typo-base-dark uppercase md:text-sm dark:text-typo-base-light hover:scale-[1.16] transition-opacity"
 				>
 					{item.label}
 				</a>

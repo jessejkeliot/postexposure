@@ -141,7 +141,14 @@
 				>
 					{#if isSubmitting}
 						<span class="icon-[boxicons--loader-lines] animate-spin text-base"></span>
-						<span>Redirecting to Stripe Checkout...</span>
+						{#if Number(totalPrice) === 0}
+							<span>Confirming Booking...</span>
+						{:else}
+							<span>Redirecting to Stripe Checkout...</span>
+						{/if}
+					{:else if Number(totalPrice) === 0}
+						<span class="icon-[boxicons--calendar-check] text-base"></span>
+						<span>Book Ticket (Free)</span>
 					{:else}
 						<span class="icon-[boxicons--credit-card] text-base"></span>
 						<span>Pay with Stripe (£{totalPrice})</span>

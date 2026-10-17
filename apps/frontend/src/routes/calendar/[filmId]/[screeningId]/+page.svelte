@@ -11,7 +11,7 @@
 
 	let { data }: PageProps = $props();
 
-	let showMoreDates = $state(false);
+	let showMoreDates = $state(true);
 
 	const coverUrl = $derived(getFilmCoverUrl(data.film, { thumb: '1200x800' }));
 
@@ -77,19 +77,19 @@
 	<!-- Buy tickets to screening section -->
 	<BuyTicketLink screening={data.screening} film={data.film}></BuyTicketLink>
 	<!-- Buy tickets to other days section -->
-	{#if showMoreDates}
-		<div class="flex flex-col space-y-2">
-			<button
-				type="button"
-				class="btn flex w-1/4 min-w-fit items-center justify-between preset-tonal"
-				onclick={() => (showMoreDates = !showMoreDates)}
-			>
-				<span>More Dates</span>
-				<span
-					class={`icon-[boxicons--chevron-right] ${showMoreDates ? 'rotate-90' : 'rotate-0'} duration-300`}
-				></span>
-			</button>
+	<div class="flex flex-col space-y-2">
+		<button
+			type="button"
+			class="btn flex w-1/4 min-w-fit items-center justify-between preset-tonal"
+			onclick={() => (showMoreDates = !showMoreDates)}
+		>
+			<span>More Dates</span>
+			<span
+				class={`icon-[boxicons--chevron-right] ${showMoreDates ? 'rotate-90' : 'rotate-0'} duration-300`}
+			></span>
+		</button>
 
+		{#if showMoreDates}
 			{#if data.upcomingFilmScreenings && data.upcomingFilmScreenings.length > 0}
 				<div class="flex flex-col space-y-2 pt-1">
 					{#each data.upcomingFilmScreenings as otherScreening (otherScreening.id)}
@@ -102,8 +102,8 @@
 					No other upcoming dates scheduled for this film.
 				</p>
 			{/if}
-		</div>
-	{/if}
+		{/if}
+	</div>
 	<!-- More films Section -->
 	{#if data.moreScreenings.length > 0}
 		<section class="mt-16 border-t border-surface-200-800 pt-12">

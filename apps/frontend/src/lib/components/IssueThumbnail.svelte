@@ -3,6 +3,7 @@
 	import type { Issue } from '$lib/types/database';
 	import { getIssuePdfUrl } from '$lib/pocketbase/db';
 	import IssueCoverFlip from './IssueCoverFlip.svelte';
+	const FLIP_ON_HOVER = true;
 
 	interface Props {
 		issue: Issue;
@@ -30,7 +31,7 @@
 	<div class="space-y-4">
 		<!-- 3D Flipping Magazine Cover -->
 		<div class="w-full">
-			<IssueCoverFlip {issue} variant="standard" />
+			<IssueCoverFlip {issue} variant="standard" disableFlipping={!FLIP_ON_HOVER}/>
 		</div>
 
 		<!-- Meta info: Date & Format -->

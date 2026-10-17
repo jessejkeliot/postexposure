@@ -2,7 +2,6 @@
 	import type { PageProps } from './$types';
 	import ArticleThumbnail from '$lib/components/ArticleThumbnail.svelte';
 	import CompactCalender from '$lib/components/CompactCalender.svelte';
-	import SeasonBanner from '$lib/components/SeasonBanner.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -13,10 +12,6 @@
 		<div class={index >= 4 ? 'hidden lg:block' : ''}>
 			<ArticleThumbnail {article} />
 		</div>
-		{:else}
-			<p class="col-span-full py-12 text-center text-sm">
-				No articles found.
-			</p>
 		{/each}
 	</section>
     <!-- <SeasonBanner/> -->
