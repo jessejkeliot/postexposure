@@ -3,12 +3,12 @@ import { getFilmById, getScreeningById, getScreeningsBySeason, getAllUpcomingScr
 import type { PageServerLoad } from './$types';
 import type { Screening } from '$lib/types/database';
 
-export const load: PageServerLoad = async ({ params }) => {
-    const film = await getFilmById(params.filmId);
+export const load: PageServerLoad = async ({ params, locals }) => {
+    const film = await getFilmById(params.filmId, locals.pb);
     if (!film) {
 		error(404, 'Film not found');
 	}
-    const screening = await getScreeningById(params.screeningId);
+    const screening = await getScreeningById(params.screeningId, locals.pb);
 
     if (!screening) {
         error(404, 'Screening not found');
@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ params }) => {
     // Fetch films in the same season 
     let moreScreenings: Screening[] = [];
     try {
-        const seasonScreenings = await getScreeningsBySeason(screening);
+        const seasonScreenings = await getScreeningsBySeason(screening, locals.pb);
         moreScreenings = seasonScreenings.filter((a) => a.film !== film.id);
     } catch {
         console.warn("No other screenings for this season were found");
@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ params }) => {
     // Fetch more upcoming dates for the same movie
     let upcomingFilmScreenings: Screening[] = [];
     try {
-        const allUpcoming = await getAllUpcomingScreenings();
+        const allUpcoming = await getAllUpcomingScreenings(locals.pb);
         upcomingFilmScreenings = allUpcoming.filter(
             (s) => s.film === film.id && s.id !== screening.id
         );

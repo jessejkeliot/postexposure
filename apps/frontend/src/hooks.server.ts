@@ -4,8 +4,13 @@ import type { Handle } from '@sveltejs/kit';
 import { auth } from '$lib/server/auth';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	// 1. Create a fresh PocketBase instance per request
-	event.locals.pb = new PocketBase(env.POCKETBASE_URL || 'http://127.0.0.1:8090');
+	// 1. Create a fresh PocketBase instance per request using SvelteKit's event.fetch
+	const pb = new PocketBase(env.POCKETBASE_URL || 'https://api.postexposuremagazine.com');
+	pb.beforeSend = (url, options) => {
+		options.fetch = event.fetch;
+		return { url, options };
+	};
+	event.locals.pb = pb;
 	event.locals.user = null;
 	event.locals.session = null;
 

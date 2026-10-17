@@ -3,8 +3,8 @@ import type { PageServerLoad } from './$types';
 import type { Article } from '$lib/types/database';
 import { getArticleBySlug, getArticleCoverUrl, getArticlesByCategory, getRecentArticles } from '$lib/pocketbase/db';
 
-export const load: PageServerLoad = async ({ params }) => {
-	const article = await getArticleBySlug(params.slug);
+export const load: PageServerLoad = async ({ params, locals }) => {
+	const article = await getArticleBySlug(params.slug, locals.pb);
 
 	if (!article) {
 		error(404, 'Article not found');
@@ -14,13 +14,13 @@ export const load: PageServerLoad = async ({ params }) => {
 	// Fetch related articles (same category if available, excluding current article)
 	let moreArticles: Article[] = [];
 	if (article.category) {
-		const categoryArticles = await getArticlesByCategory(article.category, 4);
+		const categoryArticles = await getArticlesByCategory(article.category, 4, locals.pb);
 		moreArticles = categoryArticles.filter((a) => a.id !== article.id);
 	}
 
 	// If fewer than 3 related articles found, supplement with recent articles
 	if (moreArticles.length < 3) {
-		const recent = await getRecentArticles(6);
+		const recent = await getRecentArticles(6, locals.pb);
 		const filteredRecent = recent.filter(
 			(a) => a.id !== article.id && !moreArticles.some((m) => m.id === a.id)
 		);

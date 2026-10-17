@@ -36,7 +36,6 @@ export const POST: RequestHandler = async ({ request, locals, url }) => {
 		filmId: film.id,
 		filmTitle: film.title,
 		showingDate: screening.showing_date ? formatScreeningDate(screening.showing_date) : '',
-		showingTime: screening.showing_date ? formatScreeningTime(screening.showing_date) : '',
 		unitPrice,
 		quantity: numQuantity,
 		userId,

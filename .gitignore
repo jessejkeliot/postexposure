@@ -19,3 +19,4 @@ build/
 # Environment vars
 .env
 .pocketbase-version
+**/.pocketbase-version

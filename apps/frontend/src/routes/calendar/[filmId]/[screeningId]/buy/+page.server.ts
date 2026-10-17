@@ -5,12 +5,12 @@ import { createTicketCheckoutSession } from '$lib/server/stripe';
 import { formatScreeningDate, formatScreeningTime } from '$lib/funcs/dates';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
-	const film = await getFilmById(params.filmId);
+	const film = await getFilmById(params.filmId, locals.pb);
 	if (!film) {
 		error(404, 'Film not found');
 	}
 
-	const screening = await getScreeningById(params.screeningId);
+	const screening = await getScreeningById(params.screeningId, locals.pb);
 	if (!screening) {
 		error(404, 'Screening not found');
 	}
@@ -24,8 +24,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
 export const actions: Actions = {
 	checkout: async ({ request, params, locals, url }) => {
-		const film = await getFilmById(params.filmId);
-		const screening = await getScreeningById(params.screeningId);
+		const film = await getFilmById(params.filmId, locals.pb);
+		const screening = await getScreeningById(params.screeningId, locals.pb);
 		
 		
 
