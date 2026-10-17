@@ -91,7 +91,7 @@
 							<!-- Purchase Button -->
 							<a
 								href={resolve(`/issues/buy?issueId=${latestIssue.id}`)}
-								class="btn btn-lg font-bold uppercase tracking-wider w-1/4 min-w-xs btn cursor-grab preset-outlined font-bold text-wrap uppercase hover:preset-filled duration-150 justify-center"
+								class="btn btn-lg font-bold uppercase tracking-wider w-1/4 min-w-fit btn cursor-grab preset-outlined font-bold text-wrap uppercase hover:preset-filled duration-150 justify-center"
 							>
 								<span class="icon-[boxicons--cart] text-xl"></span>
 								<span>Purchase PDF</span>
