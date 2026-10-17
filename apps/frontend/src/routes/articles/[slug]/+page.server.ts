@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	if (!article) {
 		error(404, 'Article not found');
 	}
-	const coverUrl = getArticleCoverUrl(article, { thumb: '1200x800' });
+	const coverUrl = getArticleCoverUrl(article, { thumb: '1200x800' }, locals.pb);
 
 	// Fetch related articles (same category if available, excluding current article)
 	let moreArticles: Article[] = [];

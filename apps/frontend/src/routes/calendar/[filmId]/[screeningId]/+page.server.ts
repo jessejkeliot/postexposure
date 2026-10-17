@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     // Fetch more upcoming dates for the same movie
     let upcomingFilmScreenings: Screening[] = [];
     try {
-        const allUpcoming = await getAllUpcomingScreenings(locals.pb);
+        const allUpcoming = await getAllUpcomingScreenings(undefined, locals.pb);
         upcomingFilmScreenings = allUpcoming.filter(
             (s) => s.film === film.id && s.id !== screening.id
         );

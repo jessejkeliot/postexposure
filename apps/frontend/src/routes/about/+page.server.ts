@@ -1,9 +1,8 @@
 import type { PageServerLoad } from './$types';
-import {getRecentAbout } from '$lib/pocketbase/db';
-import type { About } from '$lib';
+import { getRecentAbout } from '$lib/pocketbase/db';
 
 export const load: PageServerLoad = async ({ locals }) => {
-    const about: About = await getRecentAbout(locals.pb);
+    const about = await getRecentAbout(locals.pb);
 
     return {
         about

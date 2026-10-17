@@ -381,8 +381,8 @@ export async function getAllUpcomingScreenings(
  */
 export async function getScreeningsForYear(
 	startDate?: Temporal.PlainDate,
-	timeZone = Temporal.Now.timeZoneId(),
-	client: PocketBase = defaultClient
+	client: PocketBase = defaultClient,
+	timeZone = Temporal.Now.timeZoneId()
 ): Promise<Screening[]> {
 	const today = startDate ?? Temporal.Now.plainDateISO(timeZone);
 	const startIso = today.toPlainDateTime({ hour: 0, minute: 0, second: 0 }).toString();
@@ -692,11 +692,15 @@ export function getFilmCoverUrl(
 
 export async function getRecentAbout(
 	client: PocketBase = defaultClient
-): Promise<About> {
-	const res = await client.collection('about').getFirstListItem<About>("", {
-		sort: '-updated',
-	});
-	return res;
+): Promise<About | null> {
+	try {
+		const res = await client.collection('about').getFirstListItem<About>("", {
+			sort: '-updated',
+		});
+		return res;
+	} catch {
+		return null;
+	}
 }
 
 // -------------------------------------------------------------

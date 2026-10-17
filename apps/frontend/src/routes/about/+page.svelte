@@ -12,7 +12,7 @@
 		</div>
 	</header>
     <div class="prose prose-neutral dark:prose-invert max-w-none prose-lg leading-relaxed">
-		{#if data.about.content}
+		{#if data.about?.content}
 			{@html data.about.content}
 		{/if}
 	</div>
