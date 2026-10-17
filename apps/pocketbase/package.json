@@ -8,6 +8,7 @@
     "dev:s3:stop": "docker stop local-s3",
     "dev:s3:delete": "docker rm -f local-s3",
     "pb:setup": "node scripts/setup-pb.js",
+    "pb:configure-s3": "node scripts/configure-s3.js",
     "pb:populate": "node scripts/populate.js"
   },
   "devDependencies": {

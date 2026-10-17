@@ -43,6 +43,53 @@ Resetting development
 *(delete the MinIO instance by running ```zsh pnpm --filter pocketbase run dev:s3:delete```)* 
 (s3 data deletion)
 
+### Configure Remote S3 Storage (Cloudflare R2, AWS, etc.)
+
+PocketBase stores uploaded media either on local disk (`apps/pocketbase/pb_data/storage`) or in an S3-compatible bucket. To send media to a remote bucket instead of local disk, point PocketBase's file storage at it — either through the Admin UI (**Settings → Files storage**) or with the helper script below.
+
+The script authenticates to PocketBase as a superuser and updates `settings.s3`:
+
+```zsh
+# Preview the resolved config without changing anything
+pnpm --filter pocketbase run pb:configure-s3 -- --dry-run
+
+# Test the bucket connection only
+pnpm --filter pocketbase run pb:configure-s3 -- --test-only
+
+# Apply (prompts for confirmation before touching a non-localhost server)
+pnpm --filter pocketbase run pb:configure-s3
+```
+
+Required environment variables (read from the root `.env`, or a file passed with `--env-file`):
+
+```env
+POCKETBASE_URL=https://api.yourdomain.com
+POCKETBASE_ADMIN_EMAIL=admin@magazine.com
+POCKETBASE_ADMIN_PASSWORD=your_superuser_password
+
+S3_BUCKET=my-media-bucket
+S3_ACCESS_KEY=your_access_key
+S3_SECRET=your_secret_key
+S3_ENDPOINT=https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+S3_REGION=auto
+S3_FORCE_PATH_STYLE=false
+```
+
+For **Cloudflare R2** specifically:
+
+- Endpoint: `https://<ACCOUNT_ID>.r2.cloudflarestorage.com`
+- Region: `auto`
+- Force path style: `false`
+- Create an R2 API token with **Object Read & Write** and use its Access Key ID / Secret
+- Keep the R2 credentials out of your dev `.env` by using a separate file, e.g.
+  ```zsh
+  pnpm --filter pocketbase run pb:configure-s3 -- --env-file .env.r2
+  ```
+
+Once configured, uploads made in the PocketBase dashboard go straight to the bucket — no per-file step in the Cloudflare dashboard is needed. Files already written to `pb_data/storage` are **not** migrated automatically; re-upload them or copy them into the bucket using the same object keys (`<collectionId>/<recordId>/<filename>`).
+
+Run `pnpm --filter pocketbase run pb:configure-s3 -- --help` for all options.
+
 ### Backend Setup
 
 In one terminal tab run the initialisation scripts (this sets the admin password)
