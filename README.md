@@ -76,3 +76,6 @@ pnpm --filter pocketbase run dev:s3:delete
 # then optionally reset the .env file with
 cp .env.sample .env
 ```
+
+Matching the rest of the site's appearance I want you to add a login/logout system using better auth.
+There needs to be a way to view the tickets associated with your account in the tickets page. Make a minimilistic component that displays all the relevant information about your ticket and a QR code which can then be scanned by a phone logged in as admin and so the qr code can just represent a custom url which if the scanning device's browser is authenticated, then the server sends back a Acceptance webpage and puts that ticket down as scanned (the acceptance webpage should only show up if that specific ticket hasn't been scanned already and it must exist). There needs to be a section for managing your account and viewing your previous purchases. The subscribe page should only show up if you are not logged in or you are logged in but aren't subscribed and on the page there should be a way to purchase a subscription using stripe.

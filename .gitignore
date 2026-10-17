@@ -14,6 +14,7 @@ build/
 **/apps/pocketbase/pb_data/
 **/apps/pocketbase/pocketbase
 **/apps/pocketbase/node_modules/
+**/apps/pocketbase/minio_data/
 
 # Environment vars
 .env

@@ -107,33 +107,41 @@ Configure S3 or MinIO storage for film stills, magazine covers, and downloadable
 
 ## 4. Deploying the SvelteKit Frontend
 
-### Production Adapter
-If deploying to a Node.js server/Docker container:
-```bash
-pnpm --filter frontend add -D @sveltejs/adapter-node
-```
+The frontend is configured with `@sveltejs/adapter-cloudflare` to deploy as a Cloudflare Pages project with server-side rendering (`_worker.js`).
 
-Update `apps/frontend/svelte.config.js` (if using adapter-node):
-```js
-import adapter from '@sveltejs/adapter-node';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+### Adapter & Wrangler Setup
+- **Adapter**: `@sveltejs/adapter-cloudflare` (`^7.2.9` for SvelteKit 2) is imported in `apps/frontend/vite.config.ts`:
+  ```ts
+  import adapter from '@sveltejs/adapter-cloudflare';
+  import path from 'node:path';
 
-/** @type {import('@sveltejs/kit').Config} */
-const config = {
-	preprocess: vitePreprocess(),
-	kit: {
-		adapter: adapter({ out: 'build' })
-	}
-};
+  export default defineConfig({
+    plugins: [
+      tailwindcss(),
+      sveltekit({
+        compilerOptions: {
+          runes: ({ filename }) =>
+            filename.split(/[/\\]/).includes('node_modules') ? undefined : true
+        },
+        adapter: adapter({
+          config: path.resolve(import.meta.dirname, 'wrangler.toml')
+        })
+      })
+    ]
+  });
+  ```
 
-export default config;
-```
-
-*(Note: If deploying to Vercel or Cloudflare, `@sveltejs/adapter-auto` works automatically.)*
+- **Wrangler Configuration (`apps/frontend/wrangler.toml`)**:
+  ```toml
+  name = "post-exposure-frontend"
+  compatibility_date = "2026-10-17"
+  compatibility_flags = ["nodejs_compat"]
+  pages_build_output_dir = ".svelte-kit/cloudflare"
+  ```
 
 ### Environment Variables
 
-Set the following environment variables in your deployment platform / `.env`:
+Set the following environment variables in the Cloudflare Dashboard (**Workers & Pages → `post-exposure-frontend` → Settings → Environment variables**):
 
 ```env
 # PocketBase Connection
@@ -143,34 +151,39 @@ POCKETBASE_ADMIN_PASSWORD=your_secure_pb_admin_password
 
 # Better Auth
 BETTER_AUTH_SECRET=generate_a_random_64_character_hex_or_alphanumeric_string
-BETTER_AUTH_URL=https://yourdomain.com
+BETTER_AUTH_URL=https://post-exposure-frontend.pages.dev   # or your custom domain
 
 # Stripe Integration
 STRIPE_SECRET_KEY=sk_live_...
 PUBLIC_STRIPE_KEY=pk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
-
-# S3 Configuration (Optional fallback for direct backend uploads)
-S3_FORCE_PATH_STYLE=true
-S3_ENABLED=true
-S3_BUCKET=my-media-bucket
-S3_REGION=us-east-1
-S3_ENDPOINT=https://s3.your-endpoint.com
-S3_ACCESS_KEY=your_access_key
-S3_SECRET=your_secret_key
 ```
 
-### Build & Run
-```bash
-# Install dependencies
-pnpm install
+### Deploying with Wrangler
 
-# Build frontend
-pnpm --filter frontend build
+1. **Log in to Cloudflare**:
+   ```bash
+   pnpm --filter frontend exec wrangler login
+   ```
+   *(Verify login with `pnpm --filter frontend exec wrangler whoami`)*
 
-# Start Node server
-NODE_ENV=production PORT=3000 node apps/frontend/build/index.js
-```
+2. **Build & Deploy via script**:
+   ```bash
+   # From root:
+   pnpm --filter frontend run deploy
+
+   # Or from apps/frontend:
+   cd apps/frontend
+   pnpm run deploy
+   ```
+
+   Under the hood, this executes:
+   ```bash
+   vite build && wrangler pages deploy
+   ```
+   Wrangler uses `apps/frontend/wrangler.toml` and automatically uploads the `.svelte-kit/cloudflare` build output (static assets + compiled `_worker.js` + `_routes.json` + `_headers`).
+
+*(Alternative: If deploying to a Node.js server/Docker container instead, switch the adapter to `@sveltejs/adapter-node` in `apps/frontend/vite.config.ts` and run `node build/index.js`.)*
 
 ---
 
