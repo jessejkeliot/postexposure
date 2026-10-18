@@ -3,7 +3,7 @@
 	import { getArticleCoverUrl } from '$lib/pocketbase/db';
 	import { resolve } from '$app/paths';
 
-	//need to add only preloading when subscriber content when 
+	//need to add only preloading when subscriber content when
 
 	interface Props {
 		article: Article;
@@ -30,33 +30,28 @@
 	const authorName = $derived(article.expand?.author?.name);
 </script>
 
-<article
-	class="group flex flex-col justify-between border-b md:border-0 pb-6 {variant ===
-	'featured'
+<a
+	class="group flex flex-col justify-between border-b pb-6 md:border-0 {variant === 'featured'
 		? 'md:grid md:grid-cols-2 md:gap-8'
 		: ''}"
+	href={resolve(`/articles/${article.slug}`)}
+	data-sveltekit-preload-data
 >
 	<div class="min-w-28">
 		{#if showCover && coverUrl}
-			<a
-				href={resolve(`/articles/${article.slug}`)} data-sveltekit-preload-data
-				class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden"
-			>
-
+			<div class="group relative mb-4 block aspect-16/10 min-w-28 overflow-hidden">
 				<img
 					src={coverUrl}
 					alt={article.title}
-					class="h-full w-full object-cover lg:brightness-90 transition duration-220 delay-0 lg:group-hover:saturate-120 lg:group-hover:brightness-100"
+					class="h-full w-full object-cover transition delay-0 duration-220 lg:brightness-90 lg:group-hover:brightness-100 lg:group-hover:saturate-120"
 					loading="lazy"
 				/>
-			</a>
+			</div>
 		{/if}
 
-		<div
-			class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider uppercase"
-		>
+		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider uppercase">
 			{#if categoryName}
-				<span class="font-medium ">[{categoryName}]</span>
+				<span class="font-medium">[{categoryName}]</span>
 			{/if}
 			{#if showDate}
 				{#if categoryName && formattedDate}
@@ -67,23 +62,21 @@
 				{/if}
 			{/if}
 			{#if article.is_paywalled}
-				<span class="border border-zinc-400 px-1 py-0.5 text-[10px] font-semibold "
-					>Subscriber</span
-				>
+				<span class="border border-zinc-400 px-1 py-0.5 text-[10px] font-semibold">Subscriber</span>
 			{/if}
 		</div>
 
 		<h2
-			class="mt-2 leading-snug font-bold tracking-wider  group-hover:underline {variant ===
+			class="mt-2 leading-snug font-bold tracking-wider group-hover:underline {variant ===
 			'featured'
 				? 'text-2xl md:text-3xl'
 				: variant === 'compact'
 					? 'text-base font-medium'
 					: 'text-xl'}"
 		>
-			<a href={resolve(`/articles/${article.slug}`)} data-sveltekit-preload-data>
+			<span>
 				{article.title}
-			</a>
+			</span>
 		</h2>
 
 		{#if article.excerpt && variant !== 'compact' && variant !== 'standard'}
@@ -94,8 +87,8 @@
 	</div>
 
 	{#if authorName}
-		<div class="mt-4 text-xs tracking-wide ">
-			By <span class="font-medium ">{authorName}</span>
+		<div class="mt-4 text-xs tracking-wide">
+			By <span class="font-medium">{authorName}</span>
 		</div>
 	{/if}
-</article>
+</a>
