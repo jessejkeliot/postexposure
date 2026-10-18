@@ -27,7 +27,7 @@
 	{/if}
 </svelte:head>
 
-<div class="mx-auto max-w-4xl py-6 sm:py-10">
+<div class="mx-auto max-w-4xl py-4">
 	<!-- Article Header -->
 	<header class="mb-4 border-b border-surface-200-800 pb-4">
 		<div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs tracking-wider uppercase opacity-75">
